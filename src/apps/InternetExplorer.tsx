@@ -20,7 +20,7 @@ export function InternetExplorer() {
         <span style={{ fontFamily: "monospace" }}>beeeep - krrrr - sshhh</span>
       </p>
       <p style={{ marginTop: 16, textAlign: "left", marginBottom: 6 }}>
-        <strong>2</strong> results found:
+        <strong>4</strong> results found:
       </p>
       <ul
         style={{
@@ -40,7 +40,7 @@ export function InternetExplorer() {
             diegomorra.github.io
           </a>
         </li>
-        <li>
+        <li style={{ marginBottom: 4 }}>
           press feature:{" "}
           <a
             href="https://dusp.mit.edu/news/20-years-mapping-invisible"
@@ -48,6 +48,26 @@ export function InternetExplorer() {
             rel="noreferrer"
           >
             MIT DUSP - 20 Years of Mapping the [in]visible
+          </a>
+        </li>
+        <li style={{ marginBottom: 4 }}>
+          biennale architettura 2025:{" "}
+          <a
+            href="https://www.labiennale.org/it/architettura/2025/collective/data-clouds"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Data Clouds
+          </a>
+        </li>
+        <li>
+          biennale architettura 2025:{" "}
+          <a
+            href="https://www.labiennale.org/it/architettura/2025/artificial/re-leaf"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Re-Leaf
           </a>
         </li>
       </ul>

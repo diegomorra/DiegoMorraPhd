@@ -10,6 +10,12 @@ import { RecycleBin } from "../apps/RecycleBin";
 import { InternetExplorer } from "../apps/InternetExplorer";
 import { Minesweeper } from "../apps/Minesweeper";
 import { Solitaire } from "../apps/Solitaire";
+import { Calculator } from "../apps/Calculator";
+import { MsDosPrompt } from "../apps/MsDosPrompt";
+import { CharacterMap } from "../apps/CharacterMap";
+import { RunDialog } from "../apps/RunDialog";
+import { Paint } from "../apps/Paint";
+import { BouncingDvd } from "../apps/BouncingDvd";
 import { Placeholder } from "../apps/Placeholder";
 import { Publications } from "../apps/Publications";
 import { CV } from "../apps/CV";
@@ -196,13 +202,13 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     id: "my-computer",
     defaultTitle: "My Computer",
     defaultIcon: "/icons/Computer3_32x32_4.png",
-    defaultSize: { width: 520, height: 400 },
+    defaultSize: { width: 580, height: 440 },
     render: () => <MyComputer />,
     menu: explorerMenu,
   },
   projects: {
     id: "projects",
-    defaultTitle: "Projects",
+    defaultTitle: "Projects and Exhibitions",
     defaultIcon: "/icons/Folder_32x32_4.png",
     defaultSize: { width: 560, height: 400 },
     render: (w) => (
@@ -224,8 +230,8 @@ export const appRegistry: Record<AppId, AppDefinition> = {
   },
   about: {
     id: "about",
-    defaultTitle: "About.txt - Notepad",
-    defaultIcon: "/icons/Notepad2_32x32_4.png",
+    defaultTitle: "About - Notepad",
+    defaultIcon: "/icons/Winhlp324001_32x32_4.png",
     defaultSize: { width: 480, height: 420 },
     render: () => <About />,
     menu: notepadMenu,
@@ -241,8 +247,8 @@ export const appRegistry: Record<AppId, AppDefinition> = {
   "recycle-bin": {
     id: "recycle-bin",
     defaultTitle: "Recycle Bin",
-    defaultIcon: "/icons/RecycleEmpty_32x32_4.png",
-    defaultSize: { width: 420, height: 320 },
+    defaultIcon: "/icons/RecycleFull_32x32_4.png",
+    defaultSize: { width: 500, height: 360 },
     render: () => <RecycleBin />,
     menu: explorerMenu,
   },
@@ -356,13 +362,54 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     render: () => <Publications />,
     menu: notepadMenu,
   },
+  calculator: {
+    id: "calculator",
+    defaultTitle: "Calculator",
+    defaultIcon: "/icons/Calculator_32x32_4.png",
+    defaultSize: { width: 240, height: 290 },
+    render: () => <Calculator />,
+  },
+  "ms-dos": {
+    id: "ms-dos",
+    defaultTitle: "MS-DOS Prompt",
+    defaultIcon: "/icons/MsDos_32x32_32.png",
+    defaultSize: { width: 520, height: 340 },
+    render: () => <MsDosPrompt />,
+  },
+  "bouncing-dvd": {
+    id: "bouncing-dvd",
+    defaultTitle: "Bouncing DVD",
+    defaultIcon: "/icons/BlankScreen100_32x32_4.png",
+    defaultSize: { width: 480, height: 300 },
+    render: () => <BouncingDvd />,
+  },
+  paint: {
+    id: "paint",
+    defaultTitle: "MS Paint",
+    defaultIcon: "/icons/Mspaint_32x32_4.png",
+    defaultSize: { width: 420, height: 360 },
+    render: () => <Paint />,
+  },
+  "character-map": {
+    id: "character-map",
+    defaultTitle: "Character Map",
+    defaultIcon: "/icons/Charmap1_32x32_4.png",
+    defaultSize: { width: 460, height: 380 },
+    render: () => <CharacterMap />,
+  },
+  run: {
+    id: "run",
+    defaultTitle: "Run",
+    defaultIcon: "/icons/Rundll1_32x32_4.png",
+    defaultSize: { width: 380, height: 180 },
+    render: (w) => <RunDialog windowId={w.id} />,
+  },
   cv: {
     id: "cv",
-    defaultTitle: "CV.doc - WordPad",
+    defaultTitle: "CV",
     defaultIcon: "/icons/Awschd32400_32x32_4.png",
-    defaultSize: { width: 520, height: 460 },
+    defaultSize: { width: 380, height: 180 },
     render: () => <CV />,
-    menu: notepadMenu,
   },
   placeholder: {
     id: "placeholder",

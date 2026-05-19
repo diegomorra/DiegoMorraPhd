@@ -8,6 +8,12 @@ export type AppId =
   | "internet-explorer"
   | "minesweeper"
   | "solitaire"
+  | "calculator"
+  | "ms-dos"
+  | "character-map"
+  | "paint"
+  | "bouncing-dvd"
+  | "run"
   | "publications"
   | "cv"
   | "placeholder";

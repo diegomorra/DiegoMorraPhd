@@ -19,16 +19,16 @@ export const desktopIcons: DesktopIconConfig[] = [
     icon: "/icons/Computer3_32x32_4.png",
   },
   {
+    id: "about",
+    appId: "about",
+    label: "About",
+    icon: "/icons/Winhlp324001_32x32_4.png",
+  },
+  {
     id: "contact",
     appId: "contact",
     label: "Contacts",
     icon: "/icons/Mailnews2_32x32_4.png",
-  },
-  {
-    id: "about",
-    appId: "about",
-    label: "About.txt",
-    icon: "/icons/Notepad2_32x32_4.png",
   },
   {
     id: "internet-explorer",
@@ -37,15 +37,9 @@ export const desktopIcons: DesktopIconConfig[] = [
     icon: "/icons/Inetcpl1313_32x32_4.png",
   },
   {
-    id: "minesweeper",
-    appId: "minesweeper",
-    label: "Minesweeper",
-    icon: "/icons/Winmine1_32x32_4.png",
-  },
-  {
     id: "projects",
     appId: "projects",
-    label: "Projects",
+    label: "Projects and Exhibitions",
     icon: "/icons/Folder_32x32_4.png",
     placement: "right",
   },
@@ -67,7 +61,7 @@ export const desktopIcons: DesktopIconConfig[] = [
     id: "recycle-bin",
     appId: "recycle-bin",
     label: "Recycle Bin",
-    icon: "/icons/RecycleEmpty_32x32_4.png",
+    icon: "/icons/RecycleFull_32x32_4.png",
     placement: "bottom-right",
   },
 ];

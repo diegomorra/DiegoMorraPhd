@@ -18,7 +18,10 @@ export function ProjectDocument({ projectId }: { projectId?: string }) {
       {project.context && <div>{project.context}</div>}
       <hr />
       <p>{project.description}</p>
-      {project.longDescription && <p>{project.longDescription}</p>}
+      {project.longDescription &&
+        project.longDescription
+          .split("\n\n")
+          .map((para, i) => <p key={i}>{para}</p>)}
       {project.url && (
         <p>
           Link:&nbsp;
@@ -27,9 +30,43 @@ export function ProjectDocument({ projectId }: { projectId?: string }) {
           </a>
         </p>
       )}
-      <p style={{ color: "#808080", marginTop: 24 }}>
-        [Project images will be added soon.]
-      </p>
+      {project.images && project.images.length > 0 && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(2, 1fr)",
+            gap: 8,
+            marginTop: 16,
+          }}
+        >
+          {project.images.map((src, i) => (
+            <a
+              key={i}
+              href={src}
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "block",
+                border: "1px solid #808080",
+                background: "#000",
+                lineHeight: 0,
+              }}
+            >
+              <img
+                src={src}
+                alt={`${project.title} - ${i + 1}`}
+                loading="lazy"
+                style={{
+                  width: "100%",
+                  aspectRatio: "4 / 3",
+                  objectFit: "cover",
+                  display: "block",
+                }}
+              />
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

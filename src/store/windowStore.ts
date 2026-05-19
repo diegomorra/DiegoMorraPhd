@@ -1,15 +1,19 @@
 import { create } from "zustand";
 import type { AppId, WindowState, OpenWindowOptions } from "../types";
 
+export type ShutdownPhase = null | "off" | "menu";
+
 interface WindowStore {
   windows: WindowState[];
   topZ: number;
+  shutdownPhase: ShutdownPhase;
   openWindow: (appId: AppId, opts?: OpenWindowOptions) => void;
   closeWindow: (id: string) => void;
   focusWindow: (id: string) => void;
   minimizeWindow: (id: string) => void;
   restoreWindow: (id: string) => void;
   toggleMinimize: (id: string) => void;
+  setShutdownPhase: (p: ShutdownPhase) => void;
 }
 
 function payloadEqual(a?: Record<string, unknown>, b?: Record<string, unknown>) {
@@ -21,6 +25,8 @@ function payloadEqual(a?: Record<string, unknown>, b?: Record<string, unknown>) 
 export const useWindowStore = create<WindowStore>((set) => ({
   windows: [],
   topZ: 10,
+  shutdownPhase: null,
+  setShutdownPhase: (p) => set({ shutdownPhase: p }),
 
   openWindow: (appId, opts = {}) =>
     set((state) => {

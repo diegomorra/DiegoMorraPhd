@@ -17,7 +17,7 @@ export function ProjectsExplorer({
           {projectCategories.map((cat) => {
             const activate = () =>
               open("projects", {
-                title: `Projects - ${cat.name}`,
+                title: `Projects and Exhibitions - ${cat.name}`,
                 icon: "/icons/FolderOpen_32x32_4.png",
                 payload: { categoryId: cat.id },
                 initialSize: { width: 560, height: 400 },

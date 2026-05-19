@@ -10,16 +10,18 @@ interface MenuItem {
   icon: string;
 }
 
+type Submenu = "games" | "programs" | null;
+
 const topItems: MenuItem[] = [
   {
     appId: "projects",
-    label: "Projects",
+    label: "Projects and Exhibitions",
     icon: "/icons/Folder_32x32_4.png",
   },
   {
     appId: "about",
     label: "About me",
-    icon: "/icons/Notepad2_32x32_4.png",
+    icon: "/icons/Winhlp324001_32x32_4.png",
   },
   {
     appId: "contact",
@@ -51,6 +53,34 @@ const gamesItems: MenuItem[] = [
   },
 ];
 
+const programsItems: MenuItem[] = [
+  {
+    appId: "calculator",
+    label: "Calculator",
+    icon: "/icons/Calculator_32x32_4.png",
+  },
+  {
+    appId: "paint",
+    label: "MS Paint",
+    icon: "/icons/Mspaint_32x32_4.png",
+  },
+  {
+    appId: "ms-dos",
+    label: "MS-DOS Prompt",
+    icon: "/icons/MsDos_32x32_32.png",
+  },
+  {
+    appId: "character-map",
+    label: "Character Map",
+    icon: "/icons/Charmap1_32x32_4.png",
+  },
+  {
+    appId: "bouncing-dvd",
+    label: "Bouncing DVD",
+    icon: "/icons/BlankScreen100_32x32_4.png",
+  },
+];
+
 function MenuRow({
   icon,
   label,
@@ -77,9 +107,20 @@ function MenuRow({
               width: 24,
               height: 24,
               imageRendering: "pixelated",
+              marginRight: 10,
             }}
           />
-        ) : undefined
+        ) : (
+          <span
+            aria-hidden
+            style={{
+              display: "inline-block",
+              width: 24,
+              height: 24,
+              marginRight: 10,
+            }}
+          />
+        )
       }
       onClick={onClick}
       onMouseEnter={onMouseEnter}
@@ -105,7 +146,8 @@ function MenuRow({
 
 export function StartMenu({ onClose }: { onClose: () => void }) {
   const open = useWindowStore((s) => s.openWindow);
-  const [submenu, setSubmenu] = useState<null | "games">(null);
+  const setShutdownPhase = useWindowStore((s) => s.setShutdownPhase);
+  const [submenu, setSubmenu] = useState<Submenu>(null);
 
   const openApp = (item: MenuItem) => {
     const app = appRegistry[item.appId];
@@ -113,31 +155,52 @@ export function StartMenu({ onClose }: { onClose: () => void }) {
     onClose();
   };
 
+  const openRun = () => {
+    const app = appRegistry.run;
+    open("run", { title: app.defaultTitle, icon: app.defaultIcon });
+    onClose();
+  };
+
+  const activeItems =
+    submenu === "games"
+      ? gamesItems
+      : submenu === "programs"
+        ? programsItems
+        : null;
+
   return (
     <div
       className="start-menu-root"
       onMouseDown={(e) => e.stopPropagation()}
     >
       <div className="start-menu-banner">
-        <span className="start-menu-banner-windows">diegomorra</span>
-        <span className="start-menu-banner-98">.exe</span>
+        <span className="start-menu-banner-text">
+          <strong>diegomorra</strong>PHD
+        </span>
       </div>
       <div className="start-menu-list">
         <List>
           <MenuRow
-            icon="/icons/Joy108_32x32_4.png"
+            icon="/icons/Joy110_32x32_4.png"
             label="Games"
             hasSubmenu
             expanded={submenu === "games"}
             onMouseEnter={() => setSubmenu("games")}
             onClick={() => setSubmenu(submenu === "games" ? null : "games")}
           />
+          <MenuRow
+            icon="/icons/FolderExe_32x32_4.png"
+            label="Programs"
+            hasSubmenu
+            expanded={submenu === "programs"}
+            onMouseEnter={() => setSubmenu("programs")}
+            onClick={() =>
+              setSubmenu(submenu === "programs" ? null : "programs")
+            }
+          />
           <List.Divider />
           {topItems.map((item) => (
-            <div
-              key={item.appId}
-              onMouseEnter={() => setSubmenu(null)}
-            >
+            <div key={item.appId} onMouseEnter={() => setSubmenu(null)}>
               <MenuRow
                 icon={item.icon}
                 label={item.label}
@@ -148,21 +211,29 @@ export function StartMenu({ onClose }: { onClose: () => void }) {
           <List.Divider />
           <div onMouseEnter={() => setSubmenu(null)}>
             <MenuRow
+              icon="/icons/Rundll1_32x32_4.png"
+              label="Run..."
+              onClick={openRun}
+            />
+          </div>
+          <List.Divider />
+          <div onMouseEnter={() => setSubmenu(null)}>
+            <MenuRow
               icon="/icons/Logo_16x16_4.png"
               label="Shut Down..."
               onClick={() => {
                 onClose();
-                alert("Shut down?\n\nClick OK to do absolutely nothing.");
+                setShutdownPhase("off");
               }}
             />
           </div>
         </List>
       </div>
 
-      {submenu === "games" && (
+      {activeItems && (
         <div className="start-menu-submenu">
           <List>
-            {gamesItems.map((item) => (
+            {activeItems.map((item) => (
               <MenuRow
                 key={item.appId}
                 icon={item.icon}

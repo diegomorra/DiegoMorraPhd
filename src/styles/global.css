@@ -18,6 +18,14 @@
   font-display: block;
 }
 
+@font-face {
+  font-family: "Classic Console";
+  src: url("/fonts/clacon2.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
 html,
 body,
 #root {
@@ -51,6 +59,140 @@ body,
   left: 0;
   right: 0;
   bottom: 36px;
+}
+
+.desktop-root.hc-mode {
+  background-color: #000000;
+  filter: grayscale(1) invert(1) contrast(1.4);
+}
+
+.blink-cursor {
+  animation: cursor-blink 1s steps(2, start) infinite;
+}
+
+@keyframes cursor-blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+.desktop-root.booting {
+  background-color: #79a0d0;
+  background-image: url("/windows98_cloud_wallpaper.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.desktop-root.booting .desktop-watermark,
+.desktop-root.booting .desktop-icons-zone,
+.desktop-root.booting .desktop-icons-corner {
+  display: none;
+}
+
+.boot-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50000;
+}
+
+.boot-dialog {
+  width: 340px;
+  background: #c0c0c0;
+  box-shadow:
+    inset 1px 1px 0 #ffffff,
+    inset -1px -1px 0 #404040,
+    inset 2px 2px 0 #dfdfdf,
+    inset -2px -2px 0 #808080,
+    2px 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 2px;
+}
+
+.boot-dialog-titlebar {
+  background: linear-gradient(to right, #000080, #1084d0);
+  color: #ffffff;
+  padding: 2px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 11px;
+  height: 18px;
+}
+
+.boot-dialog-close {
+  background: #c0c0c0;
+  color: #000;
+  width: 16px;
+  height: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow:
+    inset 1px 1px 0 #ffffff,
+    inset -1px -1px 0 #808080;
+  line-height: 1;
+}
+
+.boot-dialog-body {
+  padding: 14px 14px 12px;
+}
+
+.boot-dialog-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.boot-dialog-icon {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.boot-dialog-text {
+  font-size: 11px;
+  color: #000;
+}
+
+.boot-progress {
+  width: 100%;
+  height: 14px;
+  background: #ffffff;
+  box-shadow:
+    inset 1px 1px 0 #808080,
+    inset -1px -1px 0 #ffffff;
+  overflow: hidden;
+  padding: 1px;
+}
+
+.boot-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: repeating-linear-gradient(
+    to right,
+    #000080 0 8px,
+    #ffffff 8px 10px
+  );
+  animation: boot-fill 2.5s linear forwards;
+}
+
+@keyframes boot-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 .desktop-watermark {
@@ -306,24 +448,20 @@ body,
   font-family: "Trebuchet MS", "MS Sans Serif", sans-serif;
 }
 
-.start-menu-banner-windows,
-.start-menu-banner-98 {
+.start-menu-banner-text {
   writing-mode: vertical-rl;
   transform: rotate(180deg);
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 400;
   letter-spacing: 0;
+  color: #ffffff;
   white-space: nowrap;
 }
 
-.start-menu-banner-windows {
-  font-size: 13px;
-  color: #c0c0c0;
-}
-
-.start-menu-banner-98 {
-  font-size: 20px;
-  font-style: italic;
-  color: #ffffff;
+.start-menu-banner-text strong {
+  font-family: "Arial Black", "Helvetica Neue", "Trebuchet MS", sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.5px;
 }
 
 .start-menu-list {

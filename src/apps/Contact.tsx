@@ -4,6 +4,8 @@ export function Contact() {
       <li>
         <strong>E-mail:</strong>{" "}
         <a href="mailto:diegomorra.dm@gmail.com">diegomorra.dm@gmail.com</a>
+        {" · "}
+        <a href="mailto:d_morra@mit.edu">d_morra@mit.edu</a>
       </li>
       <li>
         <strong>LinkedIn:</strong>{" "}
