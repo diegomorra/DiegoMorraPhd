@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/fetch-publications.mjs",
     "build": "tsc -b && vite build",
+    "fetch-publications": "node scripts/fetch-publications.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

@@ -7,6 +7,9 @@ export type AppId =
   | "recycle-bin"
   | "internet-explorer"
   | "minesweeper"
+  | "solitaire"
+  | "publications"
+  | "cv"
   | "placeholder";
 
 export interface WindowState {

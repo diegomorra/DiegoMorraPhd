@@ -40,6 +40,11 @@ const topItems: MenuItem[] = [
 
 const gamesItems: MenuItem[] = [
   {
+    appId: "solitaire",
+    label: "Solitaire",
+    icon: "/icons/Sol1_32x32_4.png",
+  },
+  {
     appId: "minesweeper",
     label: "Minesweeper",
     icon: "/icons/Winmine1_32x32_4.png",

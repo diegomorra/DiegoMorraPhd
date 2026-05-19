@@ -9,7 +9,10 @@ import { Contact } from "../apps/Contact";
 import { RecycleBin } from "../apps/RecycleBin";
 import { InternetExplorer } from "../apps/InternetExplorer";
 import { Minesweeper } from "../apps/Minesweeper";
+import { Solitaire } from "../apps/Solitaire";
 import { Placeholder } from "../apps/Placeholder";
+import { Publications } from "../apps/Publications";
+import { CV } from "../apps/CV";
 
 export interface AppMenu {
   name: string;
@@ -229,7 +232,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
   },
   contact: {
     id: "contact",
-    defaultTitle: "Contacts - Outlook Express",
+    defaultTitle: "Contacts",
     defaultIcon: "/icons/Mailnews2_32x32_4.png",
     defaultSize: { width: 440, height: 320 },
     render: () => <Contact />,
@@ -300,6 +303,66 @@ export const appRegistry: Record<AppId, AppDefinition> = {
         ),
       },
     ],
+  },
+  solitaire: {
+    id: "solitaire",
+    defaultTitle: "Solitaire",
+    defaultIcon: "/icons/Sol1_32x32_4.png",
+    defaultSize: { width: 460, height: 480 },
+    render: () => <Solitaire />,
+    menu: [
+      {
+        name: "Game",
+        list: (
+          <List>
+            <List.Item style={{ color: "#808080", cursor: "default" }}>
+              Deal
+            </List.Item>
+            <List.Item style={{ color: "#808080", cursor: "default" }}>
+              Undo
+            </List.Item>
+            <List.Divider />
+            <List.Item style={{ color: "#808080", cursor: "default" }}>
+              Options...
+            </List.Item>
+            <List.Divider />
+            <List.Item style={{ color: "#808080", cursor: "default" }}>
+              Exit
+            </List.Item>
+          </List>
+        ),
+      },
+      {
+        name: "Help",
+        list: (
+          <List>
+            <List.Item style={{ color: "#808080", cursor: "default" }}>
+              Help Topics
+            </List.Item>
+            <List.Divider />
+            <List.Item style={{ color: "#808080", cursor: "default" }}>
+              About Solitaire
+            </List.Item>
+          </List>
+        ),
+      },
+    ],
+  },
+  publications: {
+    id: "publications",
+    defaultTitle: "Publications.txt - Notepad",
+    defaultIcon: "/icons/Notepad1_32x32_4.png",
+    defaultSize: { width: 460, height: 380 },
+    render: () => <Publications />,
+    menu: notepadMenu,
+  },
+  cv: {
+    id: "cv",
+    defaultTitle: "CV.doc - WordPad",
+    defaultIcon: "/icons/Awschd32400_32x32_4.png",
+    defaultSize: { width: 520, height: 460 },
+    render: () => <CV />,
+    menu: notepadMenu,
   },
   placeholder: {
     id: "placeholder",

@@ -45,20 +45,64 @@ body,
   overflow: hidden;
 }
 
-.desktop-icons {
+.desktop-surface {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 36px;
-  padding: 8px;
+}
+
+.desktop-watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: rgba(255, 255, 255, 0.28);
+  font-size: 56px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.18);
+}
+
+@media (max-width: 700px) {
+  .desktop-watermark {
+    font-size: 28px;
+    letter-spacing: 0;
+  }
+}
+
+.desktop-icons-zone {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  padding: 0;
   display: grid;
   grid-template-rows: repeat(auto-fill, 88px);
   grid-auto-columns: 88px;
   grid-auto-flow: column;
   gap: 0;
   align-content: start;
+}
+
+.desktop-icons-left {
+  left: 8px;
   justify-content: start;
+}
+
+.desktop-icons-right {
+  right: 8px;
+  justify-content: end;
+}
+
+.desktop-icons-corner {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 88px;
 }
 
 .desktop-icon {
@@ -244,7 +288,7 @@ body,
 }
 
 .start-menu-banner {
-  width: 28px;
+  width: 30px;
   align-self: stretch;
   background: linear-gradient(
     to top,
@@ -254,9 +298,11 @@ body,
   );
   color: #c0c0c0;
   display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 6px 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 8px 0;
+  gap: 2px;
   font-family: "Trebuchet MS", "MS Sans Serif", sans-serif;
 }
 
@@ -266,18 +312,18 @@ body,
   transform: rotate(180deg);
   font-weight: bold;
   letter-spacing: 0;
+  white-space: nowrap;
 }
 
 .start-menu-banner-windows {
-  font-size: 16px;
+  font-size: 13px;
   color: #c0c0c0;
 }
 
 .start-menu-banner-98 {
-  font-size: 24px;
+  font-size: 20px;
   font-style: italic;
   color: #ffffff;
-  margin-bottom: 4px;
 }
 
 .start-menu-list {

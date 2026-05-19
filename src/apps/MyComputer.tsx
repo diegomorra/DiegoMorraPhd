@@ -1,4 +1,5 @@
 import { useWindowStore } from "../store/windowStore";
+import { useTouchPrimary } from "../hooks/useTouchPrimary";
 
 interface Entry {
   appId:
@@ -40,22 +41,26 @@ const entries: Entry[] = [
 
 export function MyComputer() {
   const open = useWindowStore((s) => s.openWindow);
+  const isTouch = useTouchPrimary();
   return (
     <div className="explorer-body">
       <div className="explorer-grid">
-        {entries.map((e) => (
-          <div
-            key={e.appId}
-            className="explorer-item"
-            tabIndex={0}
-            onDoubleClick={() =>
-              open(e.appId, { title: e.title, icon: e.icon })
-            }
-          >
-            <img src={e.icon} alt="" />
-            <span className="explorer-item-label">{e.label}</span>
-          </div>
-        ))}
+        {entries.map((e) => {
+          const activate = () =>
+            open(e.appId, { title: e.title, icon: e.icon });
+          return (
+            <div
+              key={e.appId}
+              className="explorer-item"
+              tabIndex={0}
+              onClick={isTouch ? activate : undefined}
+              onDoubleClick={activate}
+            >
+              <img src={e.icon} alt="" />
+              <span className="explorer-item-label">{e.label}</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

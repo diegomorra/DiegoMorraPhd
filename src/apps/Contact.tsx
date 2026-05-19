@@ -35,6 +35,26 @@ export function Contact() {
           github.com/diegomorra
         </a>
       </li>
+      <li>
+        <strong>ResearchGate:</strong>{" "}
+        <a
+          href="https://www.researchgate.net/profile/Diego-Morra"
+          target="_blank"
+          rel="noreferrer"
+        >
+          researchgate.net/profile/Diego-Morra
+        </a>
+      </li>
+      <li>
+        <strong>Google Scholar:</strong>{" "}
+        <a
+          href="https://scholar.google.com/citations?user=GJynx_QAAAAJ&hl=it"
+          target="_blank"
+          rel="noreferrer"
+        >
+          scholar.google.com/citations?user=GJynx_QAAAAJ
+        </a>
+      </li>
     </ul>
   );
 }

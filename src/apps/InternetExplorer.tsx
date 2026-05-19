@@ -19,16 +19,38 @@ export function InternetExplorer() {
         Dialing your provider...{" "}
         <span style={{ fontFamily: "monospace" }}>beeeep - krrrr - sshhh</span>
       </p>
-      <p style={{ marginTop: 16 }}>
-        Meanwhile, here's the old site:{" "}
-        <a
-          href="https://diegomorra.github.io/index.html"
-          target="_blank"
-          rel="noreferrer"
-        >
-          diegomorra.github.io
-        </a>
+      <p style={{ marginTop: 16, textAlign: "left", marginBottom: 6 }}>
+        <strong>2</strong> results found:
       </p>
+      <ul
+        style={{
+          textAlign: "left",
+          margin: 0,
+          paddingLeft: 22,
+          listStyle: "square",
+        }}
+      >
+        <li style={{ marginBottom: 4 }}>
+          previous website:{" "}
+          <a
+            href="https://diegomorra.github.io/index.html"
+            target="_blank"
+            rel="noreferrer"
+          >
+            diegomorra.github.io
+          </a>
+        </li>
+        <li>
+          press feature:{" "}
+          <a
+            href="https://dusp.mit.edu/news/20-years-mapping-invisible"
+            target="_blank"
+            rel="noreferrer"
+          >
+            MIT DUSP - 20 Years of Mapping the [in]visible
+          </a>
+        </li>
+      </ul>
     </div>
   );
 }
