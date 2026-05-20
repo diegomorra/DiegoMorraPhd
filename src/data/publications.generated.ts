@@ -140,4 +140,4 @@ export const publications: Publication[] = [
   }
 ];
 
-export const publicationsFetchedAt = "2026-05-20T04:21:12.744Z";
+export const publicationsFetchedAt = "2026-05-20T14:40:53.995Z";

@@ -20,7 +20,7 @@ export function InternetExplorer() {
         <span style={{ fontFamily: "monospace" }}>beeeep - krrrr - sshhh</span>
       </p>
       <p style={{ marginTop: 16, textAlign: "left", marginBottom: 6 }}>
-        <strong>5</strong> results found:
+        <strong>6</strong> results found for <strong>Diego Morra</strong>:
       </p>
       <ul
         style={{
@@ -30,16 +30,6 @@ export function InternetExplorer() {
           listStyle: "square",
         }}
       >
-        <li style={{ marginBottom: 4 }}>
-          previous website:{" "}
-          <a
-            href="https://diegomorra.github.io/index.html"
-            target="_blank"
-            rel="noreferrer"
-          >
-            diegomorra.github.io
-          </a>
-        </li>
         <li style={{ marginBottom: 4 }}>
           press feature:{" "}
           <a
@@ -70,7 +60,7 @@ export function InternetExplorer() {
             Re-Leaf
           </a>
         </li>
-        <li>
+        <li style={{ marginBottom: 4 }}>
           palazzo esposizioni roma:{" "}
           <a
             href="https://www.palazzoesposizioniroma.it/mostra/re-leaf-seeing-the-city-through-its-trees"
@@ -78,6 +68,27 @@ export function InternetExplorer() {
             rel="noreferrer"
           >
             Re-Leaf — Seeing the City Through Its Trees
+          </a>
+        </li>
+        <li style={{ marginBottom: 4 }}>
+          Invited speaker:{" "}
+          <a
+            href="https://www.som.polimi.it/events/do-impact-dati-e-ai-per-leconomia-sociale/"
+            target="_blank"
+            rel="noreferrer"
+          >
+            DO IMPACT — Data and AI for the Social Economy (Politecnico di
+            Milano)
+          </a>
+        </li>
+        <li>
+          previous website:{" "}
+          <a
+            href="https://diegomorra.github.io/index.html"
+            target="_blank"
+            rel="noreferrer"
+          >
+            diegomorra.github.io
           </a>
         </li>
       </ul>

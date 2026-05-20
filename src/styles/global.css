@@ -476,6 +476,10 @@ body,
   min-width: 180px;
 }
 
+.start-menu-subitem {
+  padding-left: 16px;
+}
+
 .start-menu-submenu {
   position: absolute;
   left: 100%;

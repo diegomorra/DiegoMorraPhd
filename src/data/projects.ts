@@ -288,8 +288,8 @@ export const projectCategories: ProjectCategory[] = [
         description:
           "Photographic series on abandoned buildings in northern Italy, where light becomes the subject.",
         longDescription:
-          "Solo la Luce is a long-running personal photography project documenting abandoned buildings across northern Italy. Rather than dwelling on decay, the series traces how natural light claims forgotten interiors — pooling on floors, slicing through broken roofs, redrawing rooms that no one inhabits anymore. The work hovers between documentary and abstraction, treating light as both subject and structural element. Selected images from the series were exhibited at the Affordable Art Fair Milano.",
-        context: "Exhibited at Affordable Art Fair Milano",
+          "Solo la Luce is a long-running personal photography project documenting abandoned buildings across northern Italy. Rather than dwelling on decay, the series traces how natural light claims forgotten interiors — pooling on floors, slicing through broken roofs, redrawing rooms that no one inhabits anymore. The work hovers between documentary and abstraction, treating light as both subject and structural element. Selected images from the series were exhibited at the Affordable Art Fair Milano and at Panova Gallery.",
+        context: "Exhibited at Affordable Art Fair Milano and Panova Gallery",
       },
     ],
   },

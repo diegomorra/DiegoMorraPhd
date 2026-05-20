@@ -2,6 +2,7 @@ import { useState } from "react";
 import { List } from "@react95/core";
 import { useWindowStore } from "../../store/windowStore";
 import { appRegistry } from "../../data/appsRegistry";
+import { useViewportSize } from "../../hooks/useViewportSize";
 import type { AppId } from "../../types";
 
 interface MenuItem {
@@ -88,6 +89,7 @@ function MenuRow({
   onMouseEnter,
   expanded,
   hasSubmenu,
+  accordion,
 }: {
   icon?: string;
   label: string;
@@ -95,6 +97,7 @@ function MenuRow({
   onMouseEnter?: () => void;
   expanded?: boolean;
   hasSubmenu?: boolean;
+  accordion?: boolean;
 }) {
   return (
     <List.Item
@@ -136,7 +139,15 @@ function MenuRow({
     >
       <span style={{ flex: 1 }}>{label}</span>
       {hasSubmenu && (
-        <span style={{ marginLeft: 12, opacity: expanded ? 1 : 0.7 }}>
+        <span
+          style={{
+            marginLeft: 12,
+            opacity: expanded ? 1 : 0.7,
+            display: "inline-block",
+            transition: "transform 0.15s ease",
+            transform: accordion && expanded ? "rotate(90deg)" : "none",
+          }}
+        >
           ▶
         </span>
       )}
@@ -148,6 +159,8 @@ export function StartMenu({ onClose }: { onClose: () => void }) {
   const open = useWindowStore((s) => s.openWindow);
   const setShutdownPhase = useWindowStore((s) => s.setShutdownPhase);
   const [submenu, setSubmenu] = useState<Submenu>(null);
+  const { width } = useViewportSize();
+  const isMobile = width <= 600;
 
   const openApp = (item: MenuItem) => {
     const app = appRegistry[item.appId];
@@ -184,20 +197,44 @@ export function StartMenu({ onClose }: { onClose: () => void }) {
             icon="/icons/Joy110_32x32_4.png"
             label="Games"
             hasSubmenu
+            accordion={isMobile}
             expanded={submenu === "games"}
-            onMouseEnter={() => setSubmenu("games")}
+            onMouseEnter={isMobile ? undefined : () => setSubmenu("games")}
             onClick={() => setSubmenu(submenu === "games" ? null : "games")}
           />
+          {isMobile &&
+            submenu === "games" &&
+            gamesItems.map((item) => (
+              <div key={item.appId} className="start-menu-subitem">
+                <MenuRow
+                  icon={item.icon}
+                  label={item.label}
+                  onClick={() => openApp(item)}
+                />
+              </div>
+            ))}
           <MenuRow
             icon="/icons/FolderExe_32x32_4.png"
             label="Programs"
             hasSubmenu
+            accordion={isMobile}
             expanded={submenu === "programs"}
-            onMouseEnter={() => setSubmenu("programs")}
+            onMouseEnter={isMobile ? undefined : () => setSubmenu("programs")}
             onClick={() =>
               setSubmenu(submenu === "programs" ? null : "programs")
             }
           />
+          {isMobile &&
+            submenu === "programs" &&
+            programsItems.map((item) => (
+              <div key={item.appId} className="start-menu-subitem">
+                <MenuRow
+                  icon={item.icon}
+                  label={item.label}
+                  onClick={() => openApp(item)}
+                />
+              </div>
+            ))}
           <List.Divider />
           {topItems.map((item) => (
             <div key={item.appId} onMouseEnter={() => setSubmenu(null)}>
@@ -230,7 +267,7 @@ export function StartMenu({ onClose }: { onClose: () => void }) {
         </List>
       </div>
 
-      {activeItems && (
+      {!isMobile && activeItems && (
         <div className="start-menu-submenu">
           <List>
             {activeItems.map((item) => (
