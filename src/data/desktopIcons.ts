@@ -39,7 +39,7 @@ export const desktopIcons: DesktopIconConfig[] = [
   {
     id: "projects",
     appId: "projects",
-    label: "Projects and Exhibitions",
+    label: "Portfolio",
     icon: "/icons/Folder_32x32_4.png",
     placement: "right",
   },

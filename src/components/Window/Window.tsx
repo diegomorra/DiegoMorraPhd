@@ -8,6 +8,8 @@ import type { WindowState } from "../../types";
 const TASKBAR_HEIGHT = 36;
 const MOBILE_BREAKPOINT = 600;
 const MOBILE_PADDING = 4;
+// Must match the `zoom` applied to .desktop-root in the mobile media query.
+const MOBILE_ZOOM = 1.3;
 
 function defaultPositionFor(index: number) {
   const baseX = 60;
@@ -28,11 +30,14 @@ export function Window({ data, index }: { data: WindowState; index: number }) {
   const viewport = useViewportSize();
   const isCompact = viewport.width < MOBILE_BREAKPOINT;
 
+  // On mobile the desktop is zoomed, so the usable space in (zoomed) CSS
+  // pixels is the real viewport divided by the zoom factor.
+  const zoom = isCompact ? MOBILE_ZOOM : 1;
   const requested = data.initialSize ?? app.defaultSize;
-  const maxW = Math.max(200, viewport.width - MOBILE_PADDING * 2);
+  const maxW = Math.max(200, viewport.width / zoom - MOBILE_PADDING * 2);
   const maxH = Math.max(
     200,
-    viewport.height - TASKBAR_HEIGHT - MOBILE_PADDING * 2,
+    viewport.height / zoom - TASKBAR_HEIGHT - MOBILE_PADDING * 2,
   );
   const size = {
     width: Math.min(requested.width, maxW),
@@ -86,8 +91,8 @@ export function Window({ data, index }: { data: WindowState; index: number }) {
         zIndex: data.zIndex,
         width: size.width,
         height: size.height,
-        maxWidth: `calc(100vw - ${MOBILE_PADDING * 2}px)`,
-        maxHeight: `calc(100vh - ${TASKBAR_HEIGHT + MOBILE_PADDING * 2}px)`,
+        maxWidth: maxW,
+        maxHeight: maxH,
         display: data.minimized ? "none" : undefined,
       }}
       onMouseDownCapture={() => focusWindow(data.id)}

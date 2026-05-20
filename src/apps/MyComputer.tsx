@@ -27,9 +27,9 @@ const entries: Entry[] = [
   },
   {
     appId: "projects",
-    label: "Projects and Exhibitions",
+    label: "Portfolio",
     icon: "/icons/Folder_32x32_4.png",
-    title: "Projects and Exhibitions",
+    title: "Portfolio",
   },
   {
     appId: "recycle-bin",

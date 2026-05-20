@@ -44,7 +44,7 @@ export function Desktop() {
         if (e.target === e.currentTarget) setSelectedId(null);
       }}
     >
-      <div className="desktop-watermark">diegomorraPHD.exe</div>
+      <div className="desktop-watermark">diegomorra.exe</div>
       <div
         className="desktop-icons-zone desktop-icons-left"
         onMouseDown={(e) => {

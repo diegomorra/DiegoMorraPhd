@@ -15,7 +15,7 @@ type Submenu = "games" | "programs" | null;
 const topItems: MenuItem[] = [
   {
     appId: "projects",
-    label: "Projects and Exhibitions",
+    label: "Portfolio",
     icon: "/icons/Folder_32x32_4.png",
   },
   {
@@ -175,7 +175,7 @@ export function StartMenu({ onClose }: { onClose: () => void }) {
     >
       <div className="start-menu-banner">
         <span className="start-menu-banner-text">
-          <strong>diegomorra</strong>PHD
+          <strong>diegomorra</strong>.EXE
         </span>
       </div>
       <div className="start-menu-list">

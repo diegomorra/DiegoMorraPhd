@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 const MESSAGES = [
   "Summoning the Setup Wizard...",
   "Casting init.bat...",
-  "Wizard is completing diegomorraPHD.exe installation...",
+  "Wizard is completing diegomorra.exe installation...",
 ];
 
 export function BootScreen() {
@@ -20,7 +20,7 @@ export function BootScreen() {
     <div className="boot-screen">
       <div className="boot-dialog">
         <div className="boot-dialog-titlebar">
-          <span>diegomorraPHD.exe starting</span>
+          <span>diegomorra.exe starting</span>
           <span className="boot-dialog-close" aria-hidden>
             ×
           </span>

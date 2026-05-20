@@ -72,10 +72,10 @@ export function About() {
         <BulletList
           items={[
             "Human-Computer Interaction (HCI)",
-            "Inclusive and Accessible Design",
-            "Assistive and Tangible Technologies",
-            "Urban Well-being and Computational Cities",
-            "Human-AI Interaction",
+            "Accessibility and Wellbeing",
+            "IoT and Tangible Technologies",
+            "Urban Sensing and Citizen Science",
+            "LLMs and Computer Vision",
             "Co-design and Participatory Methods",
           ]}
         />

@@ -208,7 +208,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
   },
   projects: {
     id: "projects",
-    defaultTitle: "Projects and Exhibitions",
+    defaultTitle: "Portfolio",
     defaultIcon: "/icons/Folder_32x32_4.png",
     defaultSize: { width: 560, height: 400 },
     render: (w) => (

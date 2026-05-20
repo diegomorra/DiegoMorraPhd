@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 const OPTIONS = [
-  { label: "Boot diegomorraPHD.exe", hc: false },
-  { label: "Boot diegomorraPHD_HighContrast.exe", hc: true },
+  { label: "Boot diegomorra.exe", hc: false },
+  { label: "Boot diegomorra_HighContrast.exe", hc: true },
 ];
 
 export function ShutdownScreen() {
@@ -61,7 +61,7 @@ export function ShutdownScreen() {
           borderBottom: "3px double #c0c0c0",
         }}
       >
-        DiegomorraPHD CD-ROM Startup Menu
+        Diegomorra CD-ROM Startup Menu
       </div>
       <div style={{ marginTop: 24 }}>
         {OPTIONS.map((opt, i) => {

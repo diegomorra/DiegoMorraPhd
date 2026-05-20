@@ -35,10 +35,6 @@ const FILES: TrashFile[] = [
     icon: "/icons/Wordpad_32x32_4.png",
   },
   {
-    name: "works_on_my_machine.exe",
-    icon: "/icons/BatExec_32x32_4.png",
-  },
-  {
     name: "node_modules_backup.zip",
     icon: "/icons/FileTextSettings_32x32_4.png",
   },
@@ -49,6 +45,10 @@ const FILES: TrashFile[] = [
   {
     name: "tenure_dreams.mp3",
     icon: "/icons/Notepad_32x32_4.png",
+  },
+  {
+    name: "CLAUDE.md",
+    icon: "/icons/FileText_32x32_4.png",
   },
   {
     name: "MEME about crying at work",

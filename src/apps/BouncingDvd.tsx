@@ -119,7 +119,7 @@ export function BouncingDvd() {
           transition: "color 60ms linear, border-color 60ms linear",
         }}
       >
-        diegomorraPHD
+        diegomorra
       </div>
       {cornerHit && (
         <div

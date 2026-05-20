@@ -53,6 +53,14 @@ body,
   overflow: hidden;
 }
 
+/* Scale up the whole desktop on small screens for readability.
+   Keep MOBILE_ZOOM in Window.tsx in sync with this value. */
+@media (max-width: 600px) {
+  .desktop-root {
+    zoom: 1.3;
+  }
+}
+
 .desktop-surface {
   position: absolute;
   top: 0;
@@ -223,8 +231,8 @@ body,
   bottom: 8px;
   padding: 0;
   display: grid;
-  grid-template-rows: repeat(auto-fill, 88px);
-  grid-auto-columns: 88px;
+  grid-template-rows: repeat(auto-fill, 100px);
+  grid-auto-columns: 100px;
   grid-auto-flow: column;
   gap: 0;
   align-content: start;
@@ -244,7 +252,7 @@ body,
   position: absolute;
   right: 8px;
   bottom: 8px;
-  width: 88px;
+  width: 100px;
 }
 
 .desktop-icon {
@@ -252,8 +260,8 @@ body,
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  width: 80px;
-  padding: 6px 4px;
+  width: 92px;
+  padding: 8px 4px;
   cursor: pointer;
   text-align: center;
   border: 1px dotted transparent;
@@ -267,13 +275,13 @@ body,
 
 .desktop-icon-img-wrap {
   position: relative;
-  width: 32px;
-  height: 32px;
+  width: 42px;
+  height: 42px;
 }
 
 .desktop-icon img {
-  width: 32px;
-  height: 32px;
+  width: 42px;
+  height: 42px;
   image-rendering: pixelated;
   pointer-events: none;
   filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.4));
@@ -327,9 +335,9 @@ body,
 
 .desktop-icon-label {
   color: #ffffff;
-  font-size: 11px;
-  margin-top: 4px;
-  line-height: 1.1;
+  font-size: 12px;
+  margin-top: 5px;
+  line-height: 1.15;
   text-shadow: 1px 1px 0 #000000;
   word-break: break-word;
   padding: 1px 2px;

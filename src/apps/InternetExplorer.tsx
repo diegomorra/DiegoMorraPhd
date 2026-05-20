@@ -20,7 +20,7 @@ export function InternetExplorer() {
         <span style={{ fontFamily: "monospace" }}>beeeep - krrrr - sshhh</span>
       </p>
       <p style={{ marginTop: 16, textAlign: "left", marginBottom: 6 }}>
-        <strong>4</strong> results found:
+        <strong>5</strong> results found:
       </p>
       <ul
         style={{
@@ -60,7 +60,7 @@ export function InternetExplorer() {
             Data Clouds
           </a>
         </li>
-        <li>
+        <li style={{ marginBottom: 4 }}>
           biennale architettura 2025:{" "}
           <a
             href="https://www.labiennale.org/it/architettura/2025/artificial/re-leaf"
@@ -68,6 +68,16 @@ export function InternetExplorer() {
             rel="noreferrer"
           >
             Re-Leaf
+          </a>
+        </li>
+        <li>
+          palazzo esposizioni roma:{" "}
+          <a
+            href="https://www.palazzoesposizioniroma.it/mostra/re-leaf-seeing-the-city-through-its-trees"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Re-Leaf — Seeing the City Through Its Trees
           </a>
         </li>
       </ul>

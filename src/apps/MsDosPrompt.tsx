@@ -86,7 +86,7 @@ export function MsDosPrompt() {
         out = DIR_LISTING;
         break;
       case "ver":
-        out = ["", "Windows 98 [diegomorraPHD Edition]", ""];
+        out = ["", "Windows 98 [diegomorra Edition]", ""];
         break;
       case "echo":
         out = [args || "ECHO is on.", ""];
