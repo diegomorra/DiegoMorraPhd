@@ -65,7 +65,23 @@ export function ProjectsExplorer({
               onDoubleClick={activate}
             >
               <img src="/icons/FolderFile_32x32_4.png" alt="" />
-              <span className="explorer-item-label">{p.title}</span>
+              <span className="explorer-item-label">
+                {p.discipline && (
+                  <span
+                    style={{
+                      display: "block",
+                      fontSize: 9,
+                      textTransform: "uppercase",
+                      letterSpacing: 0.3,
+                      color: "#000080",
+                      opacity: 0.85,
+                    }}
+                  >
+                    {p.discipline}
+                  </span>
+                )}
+                {p.title}
+              </span>
             </div>
           );
         })}

@@ -45,27 +45,79 @@ export function About() {
 
       <Section title="Bio">
         <p style={{ margin: 0 }}>
-          Diego Morra is a Postdoctoral Researcher at the MIT Senseable City
-          Lab. His research explores the intersection of computer science,
-          accessibility, and urban well-being, leveraging interactive
-          technologies and artificial intelligence. He holds a background in
-          Interaction Design and a PhD in Information Technology from the
-          Department of Electronics, Information, and Bioengineering (DEIB) at
-          Politecnico di Milano, where he focused on the design of interactive
-          technologies for people with disabilities. Diego's work has been
-          published in high-impact journals and presented at leading
-          conferences in human-computer interaction and interactive systems.
+          Diego Morra is a Postdoctoral Researcher at the{" "}
+          <strong>MIT Senseable City Lab</strong>. His research explores the
+          intersection of{" "}
+          <strong>computer science, accessibility, and urban well-being</strong>
+          , leveraging interactive technologies and artificial intelligence. He
+          holds a background in <strong>Interaction Design</strong> and a{" "}
+          <strong>PhD in Information Technology</strong> from the Department of
+          Electronics, Information,
+          and Bioengineering (DEIB) at <strong>Politecnico di Milano</strong>,
+          where he focused on the design of interactive technologies for{" "}
+          <strong>people with disabilities</strong>. Diego's work has been
+          published in high-impact journals and presented at leading conferences
+          in <strong>human-computer interaction</strong> and interactive
+          systems.
         </p>
       </Section>
 
       <Section title="Current position">
-        <p style={{ margin: 0 }}>
-          Postdoctoral Researcher
-          <br />
-          MIT Senseable City Lab
-          <br />
-          Massachusetts Institute of Technology
-        </p>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+          }}
+        >
+          <p style={{ margin: 0 }}>
+            <strong>Postdoctoral Researcher</strong>
+            <br />
+            MIT Senseable City Lab
+            <br />
+            Massachusetts Institute of Technology
+          </p>
+          <img
+            src="/mit-logo-pixel.png"
+            alt="Massachusetts Institute of Technology"
+            style={{
+              width: 96,
+              height: 64,
+              flexShrink: 0,
+              imageRendering: "pixelated",
+            }}
+          />
+        </div>
+      </Section>
+
+      <Section title="Education">
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+          }}
+        >
+          <p style={{ margin: 0 }}>
+            <strong>Ph.D. in Information Technology</strong>
+            <br />
+            Department of Electronics, Information and Bioengineering (DEIB)
+            <br />
+            Politecnico di Milano
+          </p>
+          <img
+            src="/polimi-logo-pixel.png"
+            alt="Politecnico di Milano"
+            style={{
+              width: 86,
+              height: 64,
+              flexShrink: 0,
+              imageRendering: "pixelated",
+            }}
+          />
+        </div>
       </Section>
 
       <Section title="Research interests">

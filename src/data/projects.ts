@@ -1,6 +1,7 @@
 export interface Project {
   id: string;
   title: string;
+  discipline?: string;
   year?: string;
   description: string;
   longDescription?: string;
@@ -227,6 +228,7 @@ export const projectCategories: ProjectCategory[] = [
       {
         id: "stradanove",
         title: "Stradanove",
+        discipline: "Branding",
         year: "2020",
         description:
           "Visual identity for a youth meeting space promoted by the city of Modena.",
@@ -237,6 +239,7 @@ export const projectCategories: ProjectCategory[] = [
       {
         id: "lemonsoda",
         title: "Lemonsoda",
+        discipline: "UX & UI Design",
         description:
           "Website redesign aligned with the brand identity and communication goals.",
         longDescription:
@@ -245,6 +248,7 @@ export const projectCategories: ProjectCategory[] = [
       {
         id: "lightdrop",
         title: "Lightdrop",
+        discipline: "UX & UI Design",
         description:
           "Social network concept that nudges users from virtual connections toward real-world activities.",
         longDescription:
@@ -253,6 +257,7 @@ export const projectCategories: ProjectCategory[] = [
       {
         id: "piantala",
         title: "PiantaLa",
+        discipline: "UX & UI Design",
         description:
           "Interactive quiz game where players plant trees by answering environmental questions.",
         longDescription:
@@ -261,6 +266,7 @@ export const projectCategories: ProjectCategory[] = [
       {
         id: "design-strategies",
         title: "Design+Strategies",
+        discipline: "Branding",
         description:
           "Platform for the Politecnico di Milano research group focused on strategic design for innovation.",
         longDescription:
@@ -271,6 +277,7 @@ export const projectCategories: ProjectCategory[] = [
       {
         id: "perle-vetro",
         title: "Giuoco delle Perle di Vetro",
+        discipline: "Motion Design",
         description:
           "Accessible booktrailer for Hermann Hesse's 1943 novel, in three sensory versions.",
         longDescription:
