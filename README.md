@@ -1,6 +1,7 @@
-# Diego Morra — Desktop
+# Diego Morra — Win98 Desktop website
 
 Personal website built as an interactive Windows 98 desktop simulation.
+Website is live at: https://diego-morra.com/
 
 Stack: Vite + React + TypeScript, [React95](https://github.com/React95/React95) for the
 Win98 UI components, [zustand](https://github.com/pmndrs/zustand) for window state.
