@@ -1,182 +1,185 @@
+import type { ReactNode } from "react";
+import {
+  profile,
+  appointments,
+  education,
+  awards,
+  academicLinks,
+  cv,
+} from "../data/profile";
+import {
+  talks,
+  workshopOrganization,
+  programCommittees,
+  reviewing,
+} from "../data/activities";
+
 export function About() {
   return (
-    <div
-      className="notepad-body"
-      style={{ padding: 14, lineHeight: 1.45 }}
-    >
-      <div
-        style={{
-          display: "flex",
-          gap: 14,
-          marginBottom: 14,
-          alignItems: "flex-start",
-        }}
-      >
-        <div
-          style={{
-            padding: 3,
-            background: "#c0c0c0",
-            boxShadow:
-              "inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff, inset 2px 2px 0 #404040, inset -2px -2px 0 #dfdfdf",
-            flexShrink: 0,
-          }}
-        >
-          <img
-            src="/DM_profilepic.png"
-            alt="Diego Morra"
-            style={{
-              display: "block",
-              width: 100,
-              height: 100,
-              objectFit: "cover",
-              imageRendering: "auto",
-            }}
-          />
+    <div className="doc-body about-body">
+      <div className="about-header">
+        <div className="about-photo">
+          <img src={profile.photo.src} alt={profile.photo.alt} />
         </div>
         <div style={{ minWidth: 0 }}>
-          <h2 style={{ margin: "0 0 4px", fontSize: 14 }}>Diego Morra Ph.D.</h2>
-          <p style={{ margin: 0, color: "#404040", fontSize: 11 }}>
-            Postdoctoral Researcher
+          <h2>{profile.fullName}</h2>
+          <p className="about-role">
+            {profile.position}
             <br />
-            MIT Senseable City Lab
+            {profile.lab}, {profile.institution}
+          </p>
+          <p className="about-links">
+            {academicLinks.map((l, i) => (
+              <span key={l.label}>
+                {i > 0 && <span aria-hidden="true"> · </span>}
+                <a href={l.href} target="_blank" rel="noreferrer">
+                  {l.label}
+                </a>
+              </span>
+            ))}
           </p>
         </div>
       </div>
 
-      <Section title="Bio">
-        <p style={{ margin: 0 }}>
-          Diego Morra is a Postdoctoral Researcher at the{" "}
-          <strong>MIT Senseable City Lab</strong>. His research explores the
-          intersection of{" "}
-          <strong>computer science, accessibility, and urban well-being</strong>
-          , leveraging interactive technologies and artificial intelligence. He
-          holds a background in <strong>Interaction Design</strong> and a{" "}
-          <strong>PhD in Information Technology</strong> from the Department of
-          Electronics, Information,
-          and Bioengineering (DEIB) at <strong>Politecnico di Milano</strong>,
-          where he focused on the design of interactive technologies for{" "}
-          <strong>people with disabilities</strong>. Diego's work has been
-          published in high-impact journals and presented at leading conferences
-          in <strong>human-computer interaction</strong> and interactive
-          systems.
-        </p>
-      </Section>
-
-      <Section title="Current position">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 12,
-          }}
-        >
-          <p style={{ margin: 0 }}>
-            <strong>Postdoctoral Researcher</strong>
-            <br />
-            MIT Senseable City Lab
-            <br />
-            Massachusetts Institute of Technology
-          </p>
-          <img
-            src="/mit-logo-pixel.png"
-            alt="Massachusetts Institute of Technology"
-            style={{
-              width: 96,
-              height: 64,
-              flexShrink: 0,
-              imageRendering: "pixelated",
-            }}
-          />
-        </div>
-      </Section>
-
-      <Section title="Education">
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: 12,
-          }}
-        >
-          <p style={{ margin: 0 }}>
-            <strong>Ph.D. in Information Technology</strong>
-            <br />
-            Department of Electronics, Information and Bioengineering (DEIB)
-            <br />
-            Politecnico di Milano
-          </p>
-          <img
-            src="/polimi-logo-pixel.png"
-            alt="Politecnico di Milano"
-            style={{
-              width: 86,
-              height: 64,
-              flexShrink: 0,
-              imageRendering: "pixelated",
-            }}
-          />
-        </div>
+      <Section title={profile.headline}>
+        {profile.statement.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
       </Section>
 
       <Section title="Research interests">
-        <BulletList
-          items={[
-            "Human-Computer Interaction (HCI)",
-            "Accessibility and Wellbeing",
-            "IoT and Tangible Technologies",
-            "Urban Sensing and Citizen Science",
-            "LLMs and Computer Vision",
-            "Co-design and Participatory Methods",
-          ]}
-        />
+        <ul className="about-bullets">
+          {profile.interests.map((it) => (
+            <li key={it}>{it}</li>
+          ))}
+        </ul>
       </Section>
+
+      <Section title="Appointments" logo="/mit-logo-pixel.png">
+        <ul className="about-list">
+          {appointments.map((a) => (
+            <li key={a.role + a.period}>
+              <strong>{a.role}</strong>, {a.org}{" "}
+              <span className="about-period">({a.period})</span>
+              {a.note && <span className="about-note">{a.note}</span>}
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section title="Education" logo="/polimi-logo-pixel.png">
+        <ul className="about-list">
+          {education.map((d) => (
+            <li key={d.degree}>
+              <strong>{d.degree}</strong>, {d.org}{" "}
+              <span className="about-period">({d.period})</span>
+              {d.details?.map((line) => (
+                <span key={line} className="about-note">
+                  {line}
+                </span>
+              ))}
+              {d.url && (
+                <span className="about-note">
+                  <a href={d.url.href} target="_blank" rel="noreferrer">
+                    {d.url.label}
+                  </a>
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section title="Awards and fellowships">
+        <ul className="about-list">
+          {awards.map((a) => (
+            <li key={a.title}>
+              <strong>{a.title}</strong> ({a.year}), {a.org}
+              <span className="about-note">{a.note}</span>
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section title="Invited talks and guest lectures">
+        <ul className="about-list">
+          {talks.map((t) => (
+            <li key={`${t.year}-${t.event}-${t.title ?? ""}`}>
+              <span className="doc-year">{t.year}</span> {t.kind}
+              {t.title ? (
+                <>
+                  , <em>“{t.title}”</em>
+                </>
+              ) : null}
+              .{" "}
+              {t.href ? (
+                <a href={t.href} target="_blank" rel="noreferrer">
+                  {t.event}
+                </a>
+              ) : (
+                t.event
+              )}
+              , {t.place}.
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <Section title="Academic service">
+        <h4>Workshop organization</h4>
+        <ul className="about-list">
+          {workshopOrganization.map((w) => (
+            <li key={w.event}>
+              <span className="doc-year">{w.year}</span> {w.role},{" "}
+              <strong>{w.event}</strong>. {w.detail}.
+            </li>
+          ))}
+        </ul>
+        <h4>Program committees</h4>
+        <ul className="about-list">
+          {programCommittees.map((v) => (
+            <li key={v.venue}>
+              <strong>{v.venue}</strong>, {v.full}
+            </li>
+          ))}
+        </ul>
+        <h4>Reviewing</h4>
+        <ul className="about-list">
+          {reviewing.map((v) => (
+            <li key={v.venue}>
+              <strong>{v.venue}</strong> ({v.years}), {v.full}
+            </li>
+          ))}
+        </ul>
+      </Section>
+
+      <p className="about-more">
+        For more information, see{" "}
+        <a href={cv.pdf} target="_blank" rel="noreferrer">
+          Diego’s CV (PDF)
+        </a>
+        .
+      </p>
     </div>
   );
 }
 
 function Section({
   title,
+  logo,
   children,
 }: {
   title: string;
-  children: React.ReactNode;
+  logo?: string;
+  children: ReactNode;
 }) {
   return (
-    <div style={{ marginBottom: 12 }}>
-      <h3
-        style={{
-          fontSize: 11,
-          color: "#000080",
-          margin: "0 0 4px",
-          letterSpacing: 0.5,
-          textTransform: "uppercase",
-          borderBottom: "1px solid #c0c0c0",
-          paddingBottom: 2,
-        }}
-      >
-        {title}
+    <section className="about-section">
+      <h3>
+        <span>{title}</span>
+        {logo && <img src={logo} alt="" className="about-logo" />}
       </h3>
       {children}
-    </div>
-  );
-}
-
-function BulletList({ items }: { items: string[] }) {
-  return (
-    <ul
-      style={{
-        margin: 0,
-        paddingLeft: 18,
-        listStyle: "square",
-      }}
-    >
-      {items.map((it, i) => (
-        <li key={i} style={{ marginBottom: 2 }}>
-          {it}
-        </li>
-      ))}
-    </ul>
+    </section>
   );
 }

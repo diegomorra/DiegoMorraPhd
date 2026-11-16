@@ -1,32 +1,73 @@
-import type { MouseEvent } from "react";
 import type { DesktopIconConfig } from "../../data/desktopIcons";
 import { useTouchPrimary } from "../../hooks/useTouchPrimary";
+import {
+  iconActivationHandlers,
+  linkActivationHandlers,
+} from "../../utils/activation";
 
 interface Props {
   config: DesktopIconConfig;
   selected: boolean;
-  onSelect: (e: MouseEvent) => void;
+  onSelect: () => void;
   onOpen: () => void;
 }
 
 export function DesktopIcon({ config, selected, onSelect, onOpen }: Props) {
-  const isTouch = useTouchPrimary();
+  const touchPrimary = useTouchPrimary();
+  const decorative = Boolean(config.decorative);
+  const className = `desktop-icon ${selected ? "selected" : ""}`;
 
-  return (
-    <div
-      className={`desktop-icon ${selected ? "selected" : ""}`}
-      tabIndex={0}
-      onMouseDown={onSelect}
-      onClick={isTouch ? onOpen : undefined}
-      onDoubleClick={onOpen}
-      onKeyDown={(e) => {
-        if (e.key === "Enter") onOpen();
-      }}
-    >
-      <span className="desktop-icon-img-wrap">
+  const content = (
+    <>
+      <span className="desktop-icon-img-wrap" aria-hidden="true">
         <img src={config.icon} alt="" />
       </span>
       <span className="desktop-icon-label">{config.label}</span>
-    </div>
+      {config.srHint && (
+        <span className="visually-hidden"> ({config.srHint})</span>
+      )}
+    </>
+  );
+
+  // Icons that point to a document (the CV PDF) are real links: they open in
+  // a new browser tab instead of a Windows 98 window.
+  if (config.href) {
+    return (
+      <li>
+        <a
+          className={className}
+          href={config.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          draggable={false}
+          onFocus={onSelect}
+          {...linkActivationHandlers({
+            href: config.href,
+            onSelect,
+            touchPrimary,
+          })}
+        >
+          {content}
+        </a>
+      </li>
+    );
+  }
+
+  return (
+    // Decorative icons are hidden from screen readers and removed from the
+    // tab order, but keep working with the mouse.
+    <li aria-hidden={decorative || undefined}>
+      <button
+        type="button"
+        className={className}
+        tabIndex={decorative ? -1 : undefined}
+        // Don't let a mouse click move keyboard focus into hidden content.
+        onMouseDown={decorative ? (e) => e.preventDefault() : undefined}
+        onFocus={decorative ? undefined : onSelect}
+        {...iconActivationHandlers({ onSelect, onOpen, touchPrimary })}
+      >
+        {content}
+      </button>
+    </li>
   );
 }

@@ -3,6 +3,7 @@ import { Button } from "@react95/core";
 import { useWindowStore } from "../store/windowStore";
 import { appRegistry } from "../data/appsRegistry";
 import type { AppId } from "../types";
+import { cv } from "../data/profile";
 
 const ALIASES: Record<string, AppId> = {
   calc: "calculator",
@@ -27,13 +28,26 @@ const ALIASES: Record<string, AppId> = {
   ie: "internet-explorer",
   notepad: "about",
   about: "about",
+  bio: "about",
   explorer: "my-computer",
   "my-computer": "my-computer",
   contacts: "contact",
   outlook: "contact",
   projects: "projects",
+  research: "projects",
+  exhibitions: "exhibitions",
+  exhibition: "exhibitions",
+  design: "design",
+  ux: "design",
   publications: "publications",
-  cv: "cv",
+  accessibility: "accessibility",
+  access: "accessibility",
+};
+
+/** Names that open a document in a new browser tab instead of a window. */
+const DOCUMENTS: Record<string, string> = {
+  cv: cv.pdf,
+  "cv.pdf": cv.pdf,
 };
 
 export function RunDialog({ windowId }: { windowId?: string }) {
@@ -45,6 +59,11 @@ export function RunDialog({ windowId }: { windowId?: string }) {
   const tryRun = () => {
     const key = value.trim().toLowerCase();
     if (!key) return;
+    if (DOCUMENTS[key]) {
+      window.open(DOCUMENTS[key], "_blank", "noopener,noreferrer");
+      if (windowId) close(windowId);
+      return;
+    }
     const appId = ALIASES[key];
     if (!appId) {
       setError(
@@ -88,8 +107,11 @@ export function RunDialog({ windowId }: { windowId?: string }) {
         </p>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-        <label style={{ fontSize: 11 }}>Open:</label>
+        <label htmlFor="run-input" style={{ fontSize: 11 }}>
+          Open:
+        </label>
         <input
+          id="run-input"
           autoFocus
           value={value}
           onChange={(e) => {

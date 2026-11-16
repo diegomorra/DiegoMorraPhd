@@ -1,173 +1,62 @@
-import { publications, type Publication } from "../data/publications";
-
-function paperUrl(p: Publication): string | null {
-  if (p.openAccessUrl) return p.openAccessUrl;
-  if (p.doi) return p.doi;
-  return null;
-}
-
-function groupByYear(pubs: Publication[]) {
-  const byYear = new Map<number, Publication[]>();
-  for (const p of pubs) {
-    const list = byYear.get(p.year) ?? [];
-    list.push(p);
-    byYear.set(p.year, list);
-  }
-  return [...byYear.entries()].sort(([a], [b]) => b - a);
-}
-
-function computeMetrics(pubs: Publication[]) {
-  const totalCitations = pubs.reduce((sum, p) => sum + p.citedBy, 0);
-  const sortedCitations = pubs
-    .map((p) => p.citedBy)
-    .sort((a, b) => b - a);
-  let hIndex = 0;
-  for (let i = 0; i < sortedCitations.length; i++) {
-    if (sortedCitations[i] >= i + 1) hIndex = i + 1;
-    else break;
-  }
-  const i10Index = pubs.filter((p) => p.citedBy >= 10).length;
-  return {
-    works: pubs.length,
-    totalCitations,
-    hIndex,
-    i10Index,
-  };
-}
-
-const SCHOLAR_URL =
-  "https://scholar.google.com/citations?user=GJynx_QAAAAJ&hl=it";
+import {
+  PUB_TYPE_LABEL,
+  PUB_TYPE_ORDER,
+  formatFetchedAt,
+  publicationMetrics,
+  publicationsOfType,
+} from "../data/publications";
+import { SCHOLAR_URL } from "../data/profile";
+import { PublicationCitation } from "../components/shared/PublicationCitation";
 
 export function Publications() {
-  if (publications.length === 0) {
-    return (
-      <div className="notepad-body">
-        {`No publications indexed yet.
-Check back soon.`}
-      </div>
-    );
-  }
-
-  const metrics = computeMetrics(publications);
-  const grouped = groupByYear(publications);
+  const m = publicationMetrics();
+  const fetched = formatFetchedAt(m.fetchedAt);
 
   return (
-    <div className="notepad-body">
-      <h2 style={{ marginTop: 0, marginBottom: 8, fontSize: 14 }}>
-        Publications
-      </h2>
+    <div className="doc-body">
+      <h2>Publications</h2>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 6,
-          padding: 8,
-          marginBottom: 16,
-          background: "#dfdfdf",
-          boxShadow:
-            "inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff",
-        }}
-      >
-        <Metric label="Works" value={metrics.works} />
-        <Metric label="Citations" value={metrics.totalCitations} />
-        <Metric label="h-index" value={metrics.hIndex} />
-        <Metric label="i10-index" value={metrics.i10Index} />
-      </div>
-
-      {grouped.map(([year, items]) => (
-        <div key={year} style={{ marginBottom: 16 }}>
-          <h3
-            style={{
-              fontSize: 12,
-              color: "#000080",
-              margin: "0 0 6px",
-              borderBottom: "1px solid #c0c0c0",
-              paddingBottom: 2,
-            }}
-          >
-            {year}
-          </h3>
-          <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-            {items.map((p, i) => {
-              const url = paperUrl(p);
-              return (
-                <li key={i} style={{ marginBottom: 10 }}>
-                  <div style={{ lineHeight: 1.35 }}>
-                    {url ? (
-                      <a
-                        href={url}
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{ color: "#0000ee" }}
-                      >
-                        {p.title}
-                      </a>
-                    ) : (
-                      <span>{p.title}</span>
-                    )}
-                  </div>
-                  <div
-                    style={{
-                      color: "#606060",
-                      fontSize: 11,
-                      marginTop: 1,
-                    }}
-                  >
-                    {p.venue || p.type || "—"}
-                    {p.citedBy > 0 &&
-                      ` · cited ${p.citedBy} time${p.citedBy === 1 ? "" : "s"}`}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+      <dl className="pub-metrics">
+        <div>
+          <dt>Publications</dt>
+          <dd>{m.works}</dd>
         </div>
-      ))}
-
-      <p style={{ color: "#808080", fontSize: 10, marginTop: 24 }}>
-        Full profile on{" "}
+        <div>
+          <dt>Citations</dt>
+          <dd>{m.totalCitations}</dd>
+        </div>
+        <div>
+          <dt>h-index</dt>
+          <dd>{m.hIndex}</dd>
+        </div>
+      </dl>
+      <p className="pub-metrics-note">
+        {fetched ? `Updated ${fetched}. ` : ""}Visit{" "}
         <a href={SCHOLAR_URL} target="_blank" rel="noreferrer">
           Google Scholar
-        </a>
-        .
+        </a>{" "}
+        for the latest figures.
       </p>
-    </div>
-  );
-}
 
-function Metric({ label, value }: { label: string; value: number }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        padding: "2px 4px",
-        background: "#ffffff",
-        boxShadow: "inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff",
-      }}
-    >
-      <span
-        style={{
-          fontSize: 18,
-          fontWeight: "bold",
-          color: "#000080",
-          lineHeight: 1.1,
-        }}
-      >
-        {value}
-      </span>
-      <span
-        style={{
-          fontSize: 10,
-          color: "#404040",
-          textTransform: "uppercase",
-          letterSpacing: 0.5,
-        }}
-      >
-        {label}
-      </span>
+      {PUB_TYPE_ORDER.map((type) => {
+        const items = publicationsOfType(type);
+        if (items.length === 0) return null;
+        return (
+          <section key={type} aria-labelledby={`pubs-${type}`}>
+            <h3 id={`pubs-${type}`}>
+              {PUB_TYPE_LABEL[type]} ({items.length})
+            </h3>
+            <ul className="pub-list">
+              {items.map((p) => (
+                <li key={p.id} className="pub-item">
+                  <PublicationCitation pub={p} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        );
+      })}
+
     </div>
   );
 }

@@ -51,6 +51,7 @@ body,
   background-color: #008080;
   user-select: none;
   overflow: hidden;
+  touch-action: manipulation;
 }
 
 /* Scale up the whole desktop on small screens for readability.
@@ -67,11 +68,15 @@ body,
   left: 0;
   right: 0;
   bottom: 36px;
+  /* Only on very short screens: lets the right column scroll instead of
+     overlapping icons. No visible scrollbar, so the icons do not shift. */
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
-.desktop-root.hc-mode {
-  background-color: #000000;
-  filter: grayscale(1) invert(1) contrast(1.4);
+.desktop-surface::-webkit-scrollbar {
+  display: none;
 }
 
 .blink-cursor {
@@ -225,6 +230,17 @@ body,
   }
 }
 
+.desktop-icons-zone,
+.desktop-icons-corner,
+.explorer-grid,
+.pub-list,
+.doc-links,
+.doc-gallery {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .desktop-icons-zone {
   position: absolute;
   top: 8px;
@@ -255,7 +271,36 @@ body,
   width: 100px;
 }
 
+/* Right side: Research Projects, Publications and CV at the top; Exhibitions,
+   Design Stuff and the Recycle Bin at the bottom. A single flex column, so on
+   short screens the bottom group follows the top one instead of covering it. */
+.desktop-icons-right-side {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  min-height: calc(100% - 16px);
+  display: flex;
+  flex-direction: column;
+}
+
+.desktop-icons-right-side > .desktop-icons-right {
+  position: static;
+  grid-template-rows: none;
+  grid-auto-flow: row;
+  grid-auto-rows: 100px;
+}
+
+.desktop-icons-right-side > .desktop-icons-corner {
+  position: static;
+  margin-top: auto;
+}
+
 .desktop-icon {
+  appearance: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  margin: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -271,6 +316,11 @@ body,
 .desktop-icon.selected {
   outline: none;
   border: 1px dotted #ffffff;
+}
+
+a.desktop-icon,
+a.explorer-item {
+  text-decoration: none;
 }
 
 .desktop-icon-img-wrap {
@@ -521,9 +571,17 @@ body,
 }
 
 .explorer-item {
+  appearance: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  margin: 0;
+  width: 96px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
   text-align: center;
   padding: 6px 4px;
   cursor: pointer;
@@ -531,10 +589,26 @@ body,
 }
 
 .explorer-item:hover,
-.explorer-item:focus {
+.explorer-item:focus,
+.explorer-item.selected {
   outline: none;
   border: 1px dotted #000080;
   background: rgba(0, 0, 128, 0.05);
+}
+
+.explorer-item.selected .explorer-item-label {
+  background: #000080;
+  color: #ffffff;
+}
+
+.explorer-item-eyebrow {
+  display: block;
+  font-size: 10px;
+  color: #000080;
+}
+
+.explorer-item.selected .explorer-item-eyebrow {
+  color: #ffffff;
 }
 
 .explorer-item img {
@@ -568,4 +642,965 @@ body,
 .contact-list a {
   color: #0000ee;
   text-decoration: underline;
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Accessibility helpers                                               */
+/* ------------------------------------------------------------------ */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Text inside windows can be selected and copied (titles, e-mails...). */
+.window-content,
+.window-content * {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.window-content button,
+.window-content button * {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+[role="dialog"]:focus,
+.window-content:focus {
+  outline: none;
+}
+
+.window-content:focus-visible {
+  outline: 1px dotted #000000;
+  outline-offset: -3px;
+}
+
+.window-content a:focus-visible,
+.window-content button:focus-visible,
+.taskbar-root button:focus-visible {
+  outline: 1px dotted #000000;
+  outline-offset: 1px;
+}
+
+/* Start menu: keyboard focus looks like the Windows 98 hover highlight. */
+.start-menu-root [role="menu"]:focus {
+  outline: none;
+}
+
+.start-menu-root [role="menuitem"]:focus {
+  outline: none;
+  background: #000080;
+  color: #ffffff;
+}
+
+.start-menu-root .start-menu-subitem {
+  padding-left: 16px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Explorer windows with a "web view" side panel (Windows 98 style)    */
+/* ------------------------------------------------------------------ */
+
+.explorer-layout {
+  display: flex;
+  height: 100%;
+  min-height: 0;
+  background: #ffffff;
+}
+
+.explorer-layout .explorer-body {
+  flex: 1;
+  min-width: 0;
+  height: auto;
+}
+
+.explorer-webview {
+  width: 190px;
+  flex-shrink: 0;
+  padding: 14px 12px;
+  overflow: auto;
+  background: linear-gradient(180deg, #4a8cd6 0%, #79b1eb 30%, #cde2f5 60%, #ffffff 100%);
+  color: #000000;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.explorer-webview-icon {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.explorer-webview h2 {
+  margin: 6px 0 10px;
+  font-size: 16px;
+  line-height: 1.1;
+}
+
+.explorer-webview p {
+  margin: 0 0 8px;
+}
+
+.explorer-webview-title {
+  font-weight: bold;
+}
+
+.explorer-webview-meta {
+  color: #1c1c4a;
+  font-style: italic;
+}
+
+.explorer-grid {
+  grid-auto-rows: 1fr;
+}
+
+@media (max-width: 600px) {
+  .explorer-layout {
+    flex-direction: column;
+  }
+  .explorer-webview {
+    width: auto;
+    max-height: 40%;
+  }
+}
+
+/* My Computer chrome */
+.mc-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #c0c0c0;
+}
+
+.mc-root .explorer-layout {
+  flex: 1;
+  height: auto;
+}
+
+.mc-toolbar {
+  display: flex;
+  gap: 2px;
+  padding: 2px 4px;
+  align-items: stretch;
+  border-bottom: 1px solid #808080;
+  box-shadow: inset 0 -1px 0 #ffffff;
+}
+
+.mc-toolbtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  min-width: 42px;
+  font-size: 11px;
+  color: #000000;
+}
+
+.mc-toolbtn img {
+  width: 22px;
+  height: 22px;
+  image-rendering: pixelated;
+}
+
+.mc-toolbtn-glyph {
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.mc-separator {
+  width: 2px;
+  margin: 4px;
+  box-shadow: inset 1px 0 0 #808080, inset -1px 0 0 #ffffff;
+}
+
+.mc-address {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px;
+  font-size: 11px;
+  border-bottom: 1px solid #808080;
+}
+
+.mc-address-field {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff;
+  padding: 2px 6px;
+}
+
+.mc-address-field img {
+  width: 14px;
+  height: 14px;
+  image-rendering: pixelated;
+}
+
+.mc-status {
+  display: flex;
+  justify-content: space-between;
+  padding: 2px 8px;
+  font-size: 11px;
+  border-top: 1px solid #808080;
+  box-shadow: inset 0 1px 0 #ffffff;
+}
+
+/* ------------------------------------------------------------------ */
+/* Document windows (About, project .doc files, Publications, ...)     */
+/* ------------------------------------------------------------------ */
+
+.doc-body {
+  background: #ffffff;
+  color: #000000;
+  padding: 10px 14px 16px;
+  font-family: "MS Sans Serif", Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+  min-height: 100%;
+}
+
+.doc-body h2 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.doc-body h3 {
+  margin: 16px 0 6px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #000080;
+  border-bottom: 1px solid #c0c0c0;
+  padding-bottom: 2px;
+}
+
+.doc-body h4 {
+  margin: 12px 0 4px;
+  font-size: 12px;
+}
+
+.doc-body p {
+  margin: 0 0 8px;
+}
+
+.doc-body a {
+  color: #0000ee;
+}
+
+.doc-body a:visited {
+  color: #551a8b;
+}
+
+.doc-summary {
+  font-weight: bold;
+}
+
+.doc-highlight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffe1;
+  border: 1px solid #808080;
+  padding: 4px 8px;
+}
+
+.doc-highlight img {
+  width: 24px;
+  height: 24px;
+  image-rendering: pixelated;
+}
+
+.doc-meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 2px 10px;
+  margin: 8px 0 12px;
+  padding: 6px 8px;
+  background: #f4f4f4;
+  box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff;
+}
+
+.doc-meta > div {
+  display: contents;
+}
+
+.doc-meta dt {
+  font-weight: bold;
+  color: #404040;
+}
+
+.doc-meta dd {
+  margin: 0;
+}
+
+.doc-meta-wide {
+  grid-template-columns: 120px 1fr;
+}
+
+.doc-list {
+  margin: 0 0 8px;
+  padding-left: 18px;
+  list-style: square;
+}
+
+.doc-list li {
+  margin-bottom: 4px;
+}
+
+.doc-muted {
+  color: #505050;
+}
+
+.doc-year {
+  font-weight: bold;
+  color: #000080;
+}
+
+.doc-links li {
+  margin-bottom: 4px;
+}
+
+.doc-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.doc-gallery a {
+  display: block;
+  border: 1px solid #808080;
+  background: #000000;
+  line-height: 0;
+}
+
+.doc-gallery img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+/* Publications */
+.pub-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 8px 0 10px;
+  padding: 6px;
+  background: #dfdfdf;
+  box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff;
+}
+
+.pub-metrics > div {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  padding: 2px 4px;
+  background: #ffffff;
+  box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff;
+}
+
+.pub-metrics dt {
+  font-size: 11px;
+  color: #404040;
+}
+
+.pub-metrics dd {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #000080;
+  line-height: 1.1;
+}
+
+.pub-metrics-note {
+  margin: -4px 0 12px;
+  font-size: 11px;
+  color: #505050;
+}
+
+.pub-item {
+  margin-bottom: 9px;
+}
+
+.pub-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+  background: #000080;
+  padding: 0 4px;
+  margin-right: 2px;
+  vertical-align: 1px;
+}
+
+.pub-title {
+  font-weight: bold;
+}
+
+.pub-extra {
+  display: block;
+  color: #505050;
+  font-size: 11px;
+}
+
+/* About */
+.about-header {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.about-photo {
+  padding: 3px;
+  background: #c0c0c0;
+  box-shadow: inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff,
+    inset 2px 2px 0 #404040, inset -2px -2px 0 #dfdfdf;
+  flex-shrink: 0;
+}
+
+.about-photo img {
+  display: block;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+}
+
+.about-role {
+  margin: 0 0 4px;
+  color: #404040;
+  font-size: 11px;
+}
+
+.about-links {
+  margin: 0;
+  font-size: 11px;
+}
+
+.about-section h3 {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.about-logo {
+  height: 28px;
+  width: auto;
+  image-rendering: pixelated;
+}
+
+.about-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.about-list li {
+  margin-bottom: 6px;
+}
+
+.about-period {
+  color: #505050;
+}
+
+.about-note {
+  display: block;
+  color: #404040;
+}
+
+.about-bullets {
+  margin: 0;
+  padding-left: 18px;
+  list-style: square;
+}
+
+.about-more {
+  margin: 16px 0 0;
+}
+
+/* Windows 98 buttons used as links */
+.win-btn {
+  display: inline-block;
+  min-width: 80px;
+  padding: 4px 12px;
+  background: #c0c0c0;
+  color: #000000 !important;
+  text-align: center;
+  text-decoration: none;
+  font-size: 11px;
+  box-shadow: inset 1px 1px 0 #ffffff, inset -1px -1px 0 #404040,
+    inset 2px 2px 0 #dfdfdf, inset -2px -2px 0 #808080;
+}
+
+.win-btn:active {
+  box-shadow: inset 1px 1px 0 #404040, inset -1px -1px 0 #ffffff,
+    inset 2px 2px 0 #808080, inset -2px -2px 0 #dfdfdf;
+}
+
+.win-btn:focus-visible {
+  outline: 1px dotted #000000;
+  outline-offset: -5px;
+}
+
+/* Contacts */
+.contact-body h3:first-of-type {
+  margin-top: 0;
+}
+
+.contact-body .contact-list {
+  height: auto;
+  padding: 0 4px;
+}
+
+/* Internet Explorer */
+.ie-dialing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: #404040;
+}
+
+.ie-dialing img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+
+.ie-noise {
+  font-family: "Courier New", monospace;
+}
+
+.ie-body h2 {
+  font-size: 13px;
+  font-weight: normal;
+}
+
+.ie-results {
+  margin: 0;
+  padding-left: 20px;
+  list-style: square;
+}
+
+.ie-results li {
+  margin-bottom: 8px;
+}
+
+.ie-source {
+  display: block;
+  color: #006400;
+  font-size: 11px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Accessibility Options window (Windows 98 Accessibility Properties)  */
+/* ------------------------------------------------------------------ */
+
+.acc-dialog {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: 8px 8px 10px;
+  background: var(--r95-color-material);
+  color: var(--r95-color-materialText);
+  font-family: "MS Sans Serif", Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.acc-tablist {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 4px;
+}
+
+.acc-tab {
+  appearance: none;
+  margin: 2px 0 0;
+  padding: 2px 9px 3px;
+  border: 0;
+  border-radius: 3px 3px 0 0;
+  background: var(--r95-color-material);
+  color: var(--r95-color-materialText);
+  font: inherit;
+  font-family: "Pixelated MS Sans Serif", "MS Sans Serif", sans-serif;
+  font-size: 11px;
+  cursor: default;
+  box-shadow:
+    inset 1px 1px 0 var(--r95-color-borderLightest),
+    inset -1px 0 0 var(--r95-color-borderDarkest),
+    inset -2px 0 0 var(--r95-color-borderDark);
+}
+
+/* The selected tab is taller and covers the top edge of its panel. */
+.acc-tab[aria-selected="true"] {
+  position: relative;
+  z-index: 2;
+  margin: 0 -2px -2px;
+  padding: 3px 11px 6px;
+}
+
+.acc-tab:focus-visible,
+.acc-panel:focus-visible {
+  outline: 1px dotted currentColor;
+  outline-offset: -4px;
+}
+
+.acc-panel {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px 14px;
+  background: var(--r95-color-material);
+  box-shadow:
+    inset 1px 1px 0 var(--r95-color-borderLightest),
+    inset -1px -1px 0 var(--r95-color-borderDarkest),
+    inset -2px -2px 0 var(--r95-color-borderDark);
+}
+
+.acc-panel[hidden] {
+  display: none;
+}
+
+.acc-panel p {
+  margin: 0 0 8px;
+}
+
+.acc-panel h3 {
+  margin: 14px 0 4px;
+  font-size: 13px;
+  font-weight: bold;
+  color: #000080;
+}
+
+.acc-panel a {
+  color: #0000ee;
+}
+
+.acc-panel a:visited {
+  color: #551a8b;
+}
+
+.acc-group {
+  margin: 0 0 12px;
+  padding: 4px 10px 6px;
+}
+
+.acc-group legend {
+  padding: 0 3px;
+}
+
+.acc-help {
+  margin: 0 0 6px;
+}
+
+.acc-indent {
+  padding-left: 20px;
+}
+
+/* React95 radio buttons take their text out of the flow: put it back, so
+   long labels wrap (and grow with Text size) without overlapping. */
+.acc-options label {
+  display: block;
+  position: relative;
+  margin: 0 0 6px;
+}
+
+.acc-options label > input[type="radio"] {
+  position: absolute;
+  top: 3px;
+  left: 0;
+  width: 12px;
+  height: 12px;
+}
+
+.acc-options label > input[type="radio"] + span {
+  top: 3px;
+}
+
+.acc-options label > input[type="radio"] ~ span:last-child {
+  position: relative;
+  top: auto;
+  left: auto;
+  display: block;
+  margin-left: 18px;
+}
+
+.acc-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 10px;
+  margin-top: 10px;
+}
+
+.acc-note {
+  margin: 0;
+  font-size: 11px;
+}
+
+.acc-buttons {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.acc-buttons button {
+  min-width: 75px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Accessibility Options settings (src/store/accessibilitySettings.ts) */
+/* ------------------------------------------------------------------ */
+
+/* Text size, like the "(large)" and "(extra large)" schemes of Windows 98:
+   content windows and desktop icons grow, games and toys keep their size.
+   Keep the factors in sync with TEXT_ZOOM. */
+html[data-text-size="large"] .window-content.adaptive > *,
+html[data-text-size="large"] .desktop-icons-zone,
+html[data-text-size="large"] .desktop-icons-corner {
+  zoom: 1.25;
+}
+
+html[data-text-size="extra-large"] .window-content.adaptive > *,
+html[data-text-size="extra-large"] .desktop-icons-zone,
+html[data-text-size="extra-large"] .desktop-icons-corner {
+  zoom: 1.5;
+}
+
+/* Single-click to open an item: names are underlined when pointed at, as in
+   the Windows 98 "Web style". */
+html[data-single-click] .desktop-icon:hover .desktop-icon-label,
+html[data-single-click] .explorer-item:hover .explorer-item-label {
+  text-decoration: underline;
+}
+
+/* High Contrast: the "High Contrast Black" (white on black) and "High
+   Contrast White" (black on white) schemes of Windows 98. The React95 theme
+   variables recolor windows, title bars, buttons and menus; content windows
+   are forced to the colors of the scheme. */
+html[data-contrast="white-on-black"] {
+  --hc-bg: #000000;
+  --hc-fg: #ffffff;
+  --hc-link: #ffff00;
+  --hc-select-bg: #800080;
+  --hc-select-fg: #ffffff;
+  --hc-disabled: #00ff00;
+  --hc-title: #800080;
+  --hc-title-text: #ffffff;
+  --hc-title-inactive: #008000;
+  --hc-title-inactive-text: #ffffff;
+}
+
+html[data-contrast="black-on-white"] {
+  --hc-bg: #ffffff;
+  --hc-fg: #000000;
+  --hc-link: #00009f;
+  --hc-select-bg: #000000;
+  --hc-select-fg: #ffffff;
+  --hc-disabled: #5c5c5c;
+  --hc-title: #000000;
+  --hc-title-text: #ffffff;
+  --hc-title-inactive: #595959; /* title text is drawn in white by React95 */
+  --hc-title-inactive-text: #ffffff;
+}
+
+html[data-contrast] {
+  --r95-color-anchor: var(--hc-link);
+  --r95-color-anchorVisited: var(--hc-link);
+  --r95-color-borderDark: var(--hc-fg);
+  --r95-color-borderDarkest: var(--hc-fg);
+  --r95-color-borderLight: var(--hc-fg);
+  --r95-color-borderLighter: var(--hc-fg);
+  --r95-color-borderLightest: var(--hc-fg);
+  --r95-color-canvas: var(--hc-bg);
+  --r95-color-canvasText: var(--hc-fg);
+  --r95-color-headerBackground: var(--hc-title);
+  --r95-color-headerText: var(--hc-title-text);
+  --r95-color-headerNotActiveBackground: var(--hc-title-inactive);
+  --r95-color-headerNotActiveText: var(--hc-title-inactive-text);
+  --r95-color-material: var(--hc-bg);
+  --r95-color-materialText: var(--hc-fg);
+  --r95-color-materialTextDisabled: var(--hc-disabled);
+  --r95-color-materialTextDisabledShadow: transparent;
+  --r95-color-materialTextInvert: var(--hc-select-fg);
+  --r95-color-progress: var(--hc-select-bg);
+  --r95-color-inputBackground: var(--hc-bg);
+  --r95-color-inputBackgroundDisabled: var(--hc-bg);
+  --r95-shadow-out: inset 0 0 0 1px var(--hc-fg);
+  --r95-shadow-in: inset 0 0 0 1px var(--hc-fg);
+  --r95-shadow-input: inset 0 0 0 1px var(--hc-fg);
+}
+
+/* Desktop */
+html[data-contrast] .desktop-root {
+  background-color: var(--hc-bg);
+}
+
+html[data-contrast] .desktop-watermark {
+  color: var(--hc-fg);
+  opacity: 0.3;
+  text-shadow: none;
+}
+
+html[data-contrast] .desktop-icon-label {
+  color: var(--hc-fg);
+  text-shadow: none;
+}
+
+html[data-contrast] .desktop-icon.selected .desktop-icon-label {
+  background-color: var(--hc-select-bg);
+  color: var(--hc-select-fg);
+}
+
+html[data-contrast] .desktop-icon:focus,
+html[data-contrast] .desktop-icon.selected {
+  border-color: var(--hc-fg);
+}
+
+html[data-contrast] .desktop-icon img {
+  filter: none;
+}
+
+/* Taskbar and Start menu */
+html[data-contrast] .taskbar-root {
+  background-color: var(--hc-bg);
+  color: var(--hc-fg);
+  box-shadow: none;
+  border-top: 1px solid var(--hc-fg);
+}
+
+html[data-contrast] .taskbar-divider,
+html[data-contrast] .system-tray {
+  box-shadow: inset 0 0 0 1px var(--hc-fg);
+}
+
+html[data-contrast] .taskbar-quicklaunch button:hover,
+html[data-contrast] .taskbar-quicklaunch button:active {
+  border-color: var(--hc-fg);
+}
+
+html[data-contrast] .start-menu-root,
+html[data-contrast] .start-menu-submenu {
+  background-color: var(--hc-bg);
+  color: var(--hc-fg);
+  box-shadow: inset 0 0 0 1px var(--hc-fg);
+}
+
+html[data-contrast] .start-menu-banner {
+  background: var(--hc-select-bg);
+}
+
+html[data-contrast] .start-menu-root [role="menuitem"]:focus {
+  background: var(--hc-select-bg);
+  color: var(--hc-select-fg);
+}
+
+/* Content windows */
+html[data-contrast] .window-content.adaptive {
+  background-color: var(--hc-bg) !important;
+  color: var(--hc-fg) !important;
+}
+
+html[data-contrast] .window-content.adaptive * {
+  color: var(--hc-fg) !important;
+  background-color: transparent !important;
+  border-color: var(--hc-fg) !important;
+  text-shadow: none !important;
+}
+
+html[data-contrast] .window-content.adaptive .explorer-webview {
+  background-image: none !important;
+}
+
+html[data-contrast] .window-content.adaptive a,
+html[data-contrast] .window-content.adaptive a * {
+  color: var(--hc-link) !important;
+}
+
+html[data-contrast] .window-content.adaptive .explorer-item.selected .explorer-item-label,
+html[data-contrast] .window-content.adaptive .explorer-item.selected .explorer-item-label * {
+  background-color: var(--hc-select-bg) !important;
+  color: var(--hc-select-fg) !important;
+}
+
+html[data-contrast] .window-content.adaptive .pub-badge {
+  border: 1px solid var(--hc-fg);
+}
+
+html[data-contrast] .window-content.adaptive .win-btn {
+  border: 1px solid var(--hc-fg);
+  box-shadow: none;
+}
+
+/* Keep the React95 check box white, so its black check mark stays visible
+   (radio buttons are images and keep their own colors). */
+html[data-contrast] .window-content.adaptive label > input[type="checkbox"] + span {
+  background-color: #ffffff !important;
+}
+
+html[data-contrast] .window-content.adaptive label:has(> input:disabled),
+html[data-contrast] .window-content.adaptive label:has(> input:disabled) * {
+  color: var(--hc-disabled) !important;
+}
+
+html[data-contrast] .window-content.adaptive .acc-tab[aria-selected="true"] {
+  background-color: var(--hc-bg) !important;
+}
+
+html[data-contrast] .window-content:focus-visible,
+html[data-contrast] .window-content :focus-visible {
+  outline: 2px solid var(--hc-link);
+}
+
+/* React95 9.7.3 ships a broken check mark (an invalid data URI that the
+   browser drops): draw the Windows 98 one. */
+.acc-dialog label > input[type="checkbox"]:checked + span {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='7' shape-rendering='crispEdges'%3E%3Cpath d='M6 0h1v1H6zM5 1h2v1H5zM0 2h1v1H0zM4 2h3v1H4zM0 3h2v1H0zM3 3h3v1H3zM0 4h5v1H0zM1 5h3v1H1zM2 6h1v1H2z'/%3E%3C/svg%3E");
+}
+
+/* High Contrast: the title bar glyphs (_ and x) are black images, and the
+   Windows 98 scroll bars are grey pictures: make both readable. */
+html[data-contrast="white-on-black"] button[title="Close"] img,
+html[data-contrast="white-on-black"] button[title="Minimize"] img {
+  filter: invert(1);
+}
+
+html[data-contrast] {
+  scrollbar-color: var(--hc-fg) var(--hc-bg);
+}
+
+/* Explorer items have an invisible border until pointed at, focused or
+   selected: keep it invisible in High Contrast too. */
+html[data-contrast] .window-content.adaptive .explorer-item {
+  border-color: transparent !important;
+}
+
+html[data-contrast] .window-content.adaptive .explorer-item:hover,
+html[data-contrast] .window-content.adaptive .explorer-item:focus,
+html[data-contrast] .window-content.adaptive .explorer-item.selected {
+  border-color: var(--hc-fg) !important;
 }

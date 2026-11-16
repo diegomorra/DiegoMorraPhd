@@ -10,6 +10,10 @@ import { BootScreen } from "./components/BootScreen";
 import { ShutdownScreen } from "./components/ShutdownScreen";
 import { PowerOffScreen } from "./components/PowerOffScreen";
 import { useWindowStore } from "./store/windowStore";
+import {
+  applyAccessibilitySettings,
+  useAccessibilitySettings,
+} from "./store/accessibilitySettings";
 import { appRegistry } from "./data/appsRegistry";
 
 function App() {
@@ -17,12 +21,20 @@ function App() {
   const shutdownPhase = useWindowStore((s) => s.shutdownPhase);
   const openWindow = useWindowStore((s) => s.openWindow);
   const [booting, setBooting] = useState(true);
-  const [hcMode] = useState(() => {
-    if (typeof sessionStorage === "undefined") return false;
-    const flag = sessionStorage.getItem("phd-hc-mode") === "1";
-    sessionStorage.removeItem("phd-hc-mode");
-    return flag;
-  });
+
+  // Accessibility Options (High Contrast, Text size, single click).
+  const highContrast = useAccessibilitySettings((s) => s.highContrast);
+  const contrastScheme = useAccessibilitySettings((s) => s.contrastScheme);
+  const textSize = useAccessibilitySettings((s) => s.textSize);
+  const singleClick = useAccessibilitySettings((s) => s.singleClick);
+  useEffect(() => {
+    applyAccessibilitySettings({
+      highContrast,
+      contrastScheme,
+      textSize,
+      singleClick,
+    });
+  }, [highContrast, contrastScheme, textSize, singleClick]);
 
   useEffect(() => {
     const t = setTimeout(() => setBooting(false), 2500);
@@ -33,25 +45,24 @@ function App() {
   // (so it's never visible behind/over the loading screen).
   useEffect(() => {
     if (booting) return;
+    // Don't move keyboard focus on page load: screen-reader users start at
+    // the top of the page (skip link to the text version).
     openWindow("about", {
       title: appRegistry.about.defaultTitle,
       icon: appRegistry.about.defaultIcon,
+      focus: false,
     });
   }, [booting, openWindow]);
 
   return (
     <>
-      <div
-        className={`desktop-root ${booting ? "booting" : ""} ${
-          hcMode ? "hc-mode" : ""
-        }`}
-      >
+      <div className={`desktop-root ${booting ? "booting" : ""}`}>
         <Desktop />
-        <div className="windows-layer">
+        <main className="windows-layer" aria-label="Open windows">
           {windows.map((w, i) => (
             <Window key={w.id} data={w} index={i} />
           ))}
-        </div>
+        </main>
         <Win98TaskBar />
         {booting && <BootScreen />}
       </div>

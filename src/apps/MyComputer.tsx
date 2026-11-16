@@ -1,267 +1,196 @@
+import { useState } from "react";
 import { useWindowStore } from "../store/windowStore";
-import { useTouchPrimary } from "../hooks/useTouchPrimary";
+import { appRegistry } from "../data/appsRegistry";
+import { ExplorerItem } from "../components/shared/ExplorerItem";
+import { handleArrowNavigation } from "../utils/activation";
+import { cv } from "../data/profile";
+import type { AppId } from "../types";
 
 interface Entry {
-  appId:
-    | "projects"
-    | "about"
-    | "contact"
-    | "recycle-bin";
+  id: string;
+  /** Opens a window... */
+  appId?: AppId;
+  /** ...or a document in a new browser tab. */
+  href?: string;
   label: string;
   icon: string;
-  title: string;
+  description: string;
 }
 
 const entries: Entry[] = [
   {
+    id: "about",
     appId: "about",
-    label: "About",
+    label: "Bio",
     icon: "/icons/Winhlp324001_32x32_4.png",
-    title: "About - Notepad",
+    description:
+      "Short bio, research interests, appointments, education, awards, invited talks and academic service.",
   },
   {
+    id: "projects",
+    appId: "projects",
+    label: "Research Projects",
+    icon: "/icons/Folder_32x32_4.png",
+    description: "Research projects, grouped by theme.",
+  },
+  {
+    id: "publications",
+    appId: "publications",
+    label: "Publications",
+    icon: "/icons/Notepad1_32x32_4.png",
+    description: "Journal articles, conference papers, chapters and workshops.",
+  },
+  {
+    id: "exhibitions",
+    appId: "exhibitions",
+    label: "Exhibitions",
+    icon: "/icons/Folder_32x32_4.png",
+    description: "Public exhibitions and installations.",
+  },
+  {
+    id: "design",
+    appId: "design",
+    label: "Design Stuff",
+    icon: "/icons/Folder_32x32_4.png",
+    description: "Selected design work.",
+  },
+  {
+    id: "cv",
+    href: cv.pdf,
+    label: "CV",
+    icon: "/icons/Awschd32400_32x32_4.png",
+    description: "Curriculum vitae (PDF, opens in a new tab).",
+  },
+  {
+    id: "contact",
     appId: "contact",
     label: "Contacts",
     icon: "/icons/Mailnews2_32x32_4.png",
-    title: "Contacts",
+    description: "E-mail and academic profiles.",
   },
   {
-    appId: "projects",
-    label: "Portfolio",
-    icon: "/icons/Folder_32x32_4.png",
-    title: "Portfolio",
+    id: "accessibility",
+    appId: "accessibility",
+    label: "Accessibility Options",
+    icon: "/icons/Access110_32x32_4.png",
+    description: "Display and mouse settings, keyboard help and the text version of this site.",
   },
   {
+    id: "recycle-bin",
     appId: "recycle-bin",
     label: "Recycle Bin",
     icon: "/icons/RecycleEmpty_32x32_4.png",
-    title: "Recycle Bin",
+    description: "Nothing important in here.",
   },
 ];
 
-interface ToolBtnProps {
+/** Decorative toolbar button (Windows 98 look only, does nothing). */
+function ToolBtn({
+  icon,
+  flip,
+  label,
+  unicode,
+}: {
   icon?: string;
   flip?: boolean;
-  rotate?: number;
   label: string;
   unicode?: string;
-}
-
-function ToolBtn({ icon, flip, rotate, label, unicode }: ToolBtnProps) {
+}) {
   return (
-    <button
-      type="button"
-      style={{
-        background: "transparent",
-        border: "1px solid transparent",
-        padding: "2px 4px",
-        cursor: "pointer",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: 2,
-        fontSize: 11,
-        fontFamily: "inherit",
-        color: "#000",
-        minWidth: 42,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.border =
-          "1px solid";
-        e.currentTarget.style.borderColor =
-          "#ffffff #808080 #808080 #ffffff";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.border = "1px solid transparent";
-      }}
-    >
+    <span className="mc-toolbtn">
       {icon ? (
         <img
           src={icon}
           alt=""
-          style={{
-            width: 22,
-            height: 22,
-            imageRendering: "pixelated",
-            transform: `${flip ? "scaleX(-1) " : ""}${rotate ? `rotate(${rotate}deg)` : ""}`.trim(),
-          }}
+          style={{ transform: flip ? "scaleX(-1)" : undefined }}
         />
       ) : (
-        <span
-          style={{
-            width: 22,
-            height: 22,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 16,
-          }}
-        >
-          {unicode}
-        </span>
+        <span className="mc-toolbtn-glyph">{unicode}</span>
       )}
       <span>{label}</span>
-    </button>
-  );
-}
-
-function ToolBarSeparator() {
-  return (
-    <div
-      style={{
-        width: 2,
-        margin: "4px 4px",
-        background: "transparent",
-        boxShadow: "inset 1px 0 0 #808080, inset -1px 0 0 #ffffff",
-      }}
-    />
+    </span>
   );
 }
 
 export function MyComputer() {
   const open = useWindowStore((s) => s.openWindow);
-  const isTouch = useTouchPrimary();
+  const [selected, setSelected] = useState<string | null>(null);
+  const sel = entries.find((e) => e.id === selected);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        background: "#c0c0c0",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          gap: 2,
-          padding: "2px 4px",
-          alignItems: "stretch",
-          borderBottom: "1px solid #808080",
-          boxShadow: "inset 0 -1px 0 #ffffff",
-        }}
-      >
+    <div className="mc-root">
+      <div className="mc-toolbar" aria-hidden="true">
         <ToolBtn icon="/icons/Back_16x16_4.png" label="Back" />
         <ToolBtn icon="/icons/Back_16x16_4.png" flip label="Forward" />
         <ToolBtn unicode="▲" label="Up" />
-        <ToolBarSeparator />
+        <span className="mc-separator" />
         <ToolBtn icon="/icons/Cut_16x16_4.png" label="Cut" />
         <ToolBtn icon="/icons/Copy_16x16_4.png" label="Copy" />
         <ToolBtn icon="/icons/Paste_16x16_4.png" label="Paste" />
-        <ToolBarSeparator />
+        <span className="mc-separator" />
         <ToolBtn icon="/icons/Undo_16x16_4.png" label="Undo" />
         <ToolBtn icon="/icons/Delete_16x16_4.png" label="Delete" />
       </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 6,
-          padding: "2px 4px",
-          fontSize: 11,
-          background: "#c0c0c0",
-          borderBottom: "1px solid #808080",
-        }}
-      >
+      <div className="mc-address" aria-hidden="true">
         <span>Address</span>
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            background: "#ffffff",
-            boxShadow: "inset 1px 1px 0 #808080, inset -1px -1px 0 #ffffff",
-            padding: "2px 6px",
-          }}
-        >
-          <img
-            src="/icons/Computer3_32x32_4.png"
-            alt=""
-            style={{ width: 14, height: 14, imageRendering: "pixelated" }}
-          />
+        <div className="mc-address-field">
+          <img src="/icons/Computer3_32x32_4.png" alt="" />
           <span>My Computer</span>
         </div>
       </div>
-      <div style={{ display: "flex", flex: 1, minHeight: 0 }}>
-        <div
-          style={{
-            width: 160,
-            background:
-              "linear-gradient(180deg, #4a8cd6 0%, #79b1eb 35%, #cde2f5 65%, #ffffff 100%)",
-            color: "#000",
-            padding: "16px 12px",
-            flexShrink: 0,
-            display: "flex",
-            flexDirection: "column",
-            gap: 10,
-          }}
-        >
+      <div className="explorer-layout">
+        <aside className="explorer-webview">
           <img
             src="/icons/Computer3_32x32_4.png"
             alt=""
-            style={{
-              width: 32,
-              height: 32,
-              imageRendering: "pixelated",
-            }}
+            className="explorer-webview-icon"
           />
-          <h2
-            style={{
-              margin: 0,
-              fontSize: 18,
-              lineHeight: 1.05,
-              fontWeight: "bold",
-              color: "#000",
-            }}
-          >
-            My
-            <br />
-            Computer
-          </h2>
-          <p style={{ margin: "8px 0 0", fontSize: 11, color: "#000" }}>
-            Select an item to view its description.
-          </p>
-        </div>
+          <h2>My Computer</h2>
+          {sel ? (
+            <>
+              <p className="explorer-webview-title">{sel.label}</p>
+              <p>{sel.description}</p>
+            </>
+          ) : (
+            <p>Select an item to view its description.</p>
+          )}
+        </aside>
         <div
-          style={{
-            flex: 1,
-            background: "#ffffff",
-            padding: 12,
-            overflow: "auto",
+          className="explorer-body"
+          // Clicking an empty area deselects, as on the desktop.
+          onMouseDown={(ev) => {
+            if (!(ev.target as HTMLElement).closest(".explorer-item")) {
+              setSelected(null);
+            }
           }}
         >
-          <div className="explorer-grid">
-            {entries.map((e) => {
-              const activate = () =>
-                open(e.appId, { title: e.title, icon: e.icon });
-              return (
-                <div
-                  key={e.appId}
-                  className="explorer-item"
-                  tabIndex={0}
-                  onClick={isTouch ? activate : undefined}
-                  onDoubleClick={activate}
-                >
-                  <img src={e.icon} alt="" />
-                  <span className="explorer-item-label">{e.label}</span>
-                </div>
-              );
-            })}
-          </div>
+          <ul
+            className="explorer-grid"
+            aria-label="My Computer"
+            onKeyDown={(e) => handleArrowNavigation(e, ".explorer-item")}
+          >
+            {entries.map((e) => (
+              <ExplorerItem
+                key={e.id}
+                icon={e.icon}
+                label={e.label}
+                href={e.href}
+                kind={e.href ? "PDF, opens in a new tab" : undefined}
+                selected={selected === e.id}
+                onSelect={() => setSelected(e.id)}
+                onOpen={() => {
+                  if (!e.appId) return;
+                  open(e.appId, {
+                    title: appRegistry[e.appId].defaultTitle,
+                    icon: e.icon,
+                  });
+                }}
+              />
+            ))}
+          </ul>
         </div>
       </div>
-      <div
-        style={{
-          padding: "2px 8px",
-          fontSize: 11,
-          background: "#c0c0c0",
-          borderTop: "1px solid #808080",
-          boxShadow: "inset 0 1px 0 #ffffff",
-          display: "flex",
-          justifyContent: "space-between",
-        }}
-      >
+      <div className="mc-status" aria-hidden="true">
         <span>{entries.length} object(s)</span>
         <span>My puter</span>
       </div>

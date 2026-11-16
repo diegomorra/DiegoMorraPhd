@@ -29,7 +29,7 @@ const DIR_LISTING = [
   "",
   " Directory of C:\\",
   "",
-  "PROJECTS    <DIR>        " + nowStamp(),
+  "RESEARCH    <DIR>        " + nowStamp(),
   "ABOUT    TXT       1.234 " + nowStamp(),
   "CV       DOC         512 " + nowStamp(),
   "PUBLICAT TXT         896 " + nowStamp(),
@@ -92,7 +92,7 @@ export function MsDosPrompt() {
         out = [args || "ECHO is on.", ""];
         break;
       case "whoami":
-        out = ["Diego Morra, designer and researcher.", ""];
+        out = ["Diego Morra, postdoctoral researcher at the MIT Senseable City Lab.", ""];
         break;
       case "cls":
         setLines([]);
@@ -142,6 +142,9 @@ export function MsDosPrompt() {
     >
       <div
         ref={scrollRef}
+        role="log"
+        aria-live="polite"
+        aria-label="MS-DOS output"
         style={{
           flex: 1,
           overflow: "auto",
@@ -163,6 +166,7 @@ export function MsDosPrompt() {
           <input
             ref={inputRef}
             type="text"
+            aria-label="MS-DOS command"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {

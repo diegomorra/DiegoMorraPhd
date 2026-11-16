@@ -3,13 +3,24 @@ import type { AppId, WindowState, OpenWindowOptions } from "../types";
 
 export type ShutdownPhase = null | "off" | "menu";
 
+/**
+ * A request to move keyboard focus into a window. The nonce makes repeated
+ * requests for the same window observable.
+ */
+export interface FocusRequest {
+  id: string;
+  nonce: number;
+}
+
 interface WindowStore {
   windows: WindowState[];
   topZ: number;
   shutdownPhase: ShutdownPhase;
+  focusRequest: FocusRequest | null;
   openWindow: (appId: AppId, opts?: OpenWindowOptions) => void;
   closeWindow: (id: string) => void;
-  focusWindow: (id: string) => void;
+  /** Bring to front. Pass moveFocus when the user acted from outside the window (e.g. taskbar). */
+  focusWindow: (id: string, opts?: { moveFocus?: boolean }) => void;
   minimizeWindow: (id: string) => void;
   restoreWindow: (id: string) => void;
   toggleMinimize: (id: string) => void;
@@ -22,14 +33,22 @@ function payloadEqual(a?: Record<string, unknown>, b?: Record<string, unknown>) 
   return JSON.stringify(a) === JSON.stringify(b);
 }
 
+let focusNonce = 0;
+function requestFocus(id: string): FocusRequest {
+  focusNonce += 1;
+  return { id, nonce: focusNonce };
+}
+
 export const useWindowStore = create<WindowStore>((set) => ({
   windows: [],
   topZ: 10,
   shutdownPhase: null,
+  focusRequest: null,
   setShutdownPhase: (p) => set({ shutdownPhase: p }),
 
   openWindow: (appId, opts = {}) =>
     set((state) => {
+      const moveFocus = opts.focus !== false;
       const existing = state.windows.find(
         (w) => w.appId === appId && payloadEqual(w.payload, opts.payload),
       );
@@ -42,6 +61,7 @@ export const useWindowStore = create<WindowStore>((set) => ({
               ? { ...w, zIndex: newZ, minimized: false }
               : w,
           ),
+          focusRequest: moveFocus ? requestFocus(existing.id) : state.focusRequest,
         };
       }
       const id = `${appId}-${Date.now()}-${Math.random()
@@ -61,13 +81,14 @@ export const useWindowStore = create<WindowStore>((set) => ({
       return {
         topZ: newZ,
         windows: [...state.windows, newWindow],
+        focusRequest: moveFocus ? requestFocus(id) : state.focusRequest,
       };
     }),
 
   closeWindow: (id) =>
     set((s) => ({ windows: s.windows.filter((w) => w.id !== id) })),
 
-  focusWindow: (id) =>
+  focusWindow: (id, opts) =>
     set((s) => {
       const newZ = s.topZ + 1;
       return {
@@ -75,6 +96,7 @@ export const useWindowStore = create<WindowStore>((set) => ({
         windows: s.windows.map((w) =>
           w.id === id ? { ...w, zIndex: newZ, minimized: false } : w,
         ),
+        focusRequest: opts?.moveFocus ? requestFocus(id) : s.focusRequest,
       };
     }),
 
@@ -93,6 +115,7 @@ export const useWindowStore = create<WindowStore>((set) => ({
         windows: s.windows.map((w) =>
           w.id === id ? { ...w, minimized: false, zIndex: newZ } : w,
         ),
+        focusRequest: requestFocus(id),
       };
     }),
 
@@ -107,6 +130,7 @@ export const useWindowStore = create<WindowStore>((set) => ({
           windows: s.windows.map((w) =>
             w.id === id ? { ...w, minimized: false, zIndex: newZ } : w,
           ),
+          focusRequest: requestFocus(id),
         };
       }
       return {

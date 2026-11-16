@@ -18,7 +18,7 @@ import { Paint } from "../apps/Paint";
 import { BouncingDvd } from "../apps/BouncingDvd";
 import { Placeholder } from "../apps/Placeholder";
 import { Publications } from "../apps/Publications";
-import { CV } from "../apps/CV";
+import { AccessibilityOptions } from "../apps/AccessibilityOptions";
 
 export interface AppMenu {
   name: string;
@@ -32,169 +32,65 @@ export interface AppDefinition {
   defaultSize: { width: number; height: number };
   render: (w: WindowState) => ReactNode;
   menu?: AppMenu[];
+  /**
+   * "document" for windows whose content is text to read: the content area
+   * gets role="document" (screen readers switch to reading mode) and receives
+   * keyboard focus when the window opens.
+   */
+  contentRole?: "document";
+  /**
+   * Content window (text, folders, documents): follows the Text size and
+   * High Contrast settings of Accessibility Options. Games and toys keep
+   * their own look.
+   */
+  adaptive?: boolean;
+  /** Escape closes the window (default true). */
+  closeOnEscape?: boolean;
+}
+
+// The Windows 98 menu bars are decorative: every item is greyed out, and the
+// whole bar is hidden from assistive technology (see Window.tsx).
+const DISABLED_ITEM = { color: "#808080", cursor: "default" } as const;
+
+function menu(name: string, items: (string | "-")[]): AppMenu {
+  return {
+    name,
+    list: (
+      <List>
+        {items.map((item, i) =>
+          item === "-" ? (
+            <List.Divider key={i} />
+          ) : (
+            <List.Item key={i} style={DISABLED_ITEM}>
+              {item}
+            </List.Item>
+          ),
+        )}
+      </List>
+    ),
+  };
 }
 
 const notepadMenu: AppMenu[] = [
-  {
-    name: "File",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>New</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Open...</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Save</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Save As...</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Page Setup...</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Print</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Exit</List.Item>
-      </List>
-    ),
-  },
-  {
-    name: "Edit",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Undo</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Cut</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Copy</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Paste</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Delete</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Find...</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Select All</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Time/Date</List.Item>
-      </List>
-    ),
-  },
-  {
-    name: "Format",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Word Wrap</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Font...</List.Item>
-      </List>
-    ),
-  },
-  {
-    name: "View",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Status Bar</List.Item>
-      </List>
-    ),
-  },
-  {
-    name: "Help",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Help Topics</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>About Notepad</List.Item>
-      </List>
-    ),
-  },
+  menu("File", ["New", "Open...", "Save", "Save As...", "-", "Page Setup...", "Print", "-", "Exit"]),
+  menu("Edit", ["Undo", "-", "Cut", "Copy", "Paste", "Delete", "-", "Find...", "Select All", "Time/Date"]),
+  menu("Format", ["Word Wrap", "Font..."]),
+  menu("View", ["Status Bar"]),
+  menu("Help", ["Help Topics", "-", "About Notepad"]),
 ];
 
 const explorerMenu: AppMenu[] = [
-  {
-    name: "File",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>New</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Create Shortcut</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Delete</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Rename</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Properties</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Close</List.Item>
-      </List>
-    ),
-  },
-  {
-    name: "Edit",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Undo</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Cut</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Copy</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Paste</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Select All</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Invert Selection</List.Item>
-      </List>
-    ),
-  },
-  {
-    name: "View",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Toolbars</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Status Bar</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Large Icons</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Small Icons</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>List</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Details</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Refresh</List.Item>
-      </List>
-    ),
-  },
-  {
-    name: "Help",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Help Topics</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>About Windows 98</List.Item>
-      </List>
-    ),
-  },
+  menu("File", ["New", "Create Shortcut", "Delete", "Rename", "Properties", "-", "Close"]),
+  menu("Edit", ["Undo", "-", "Cut", "Copy", "Paste", "-", "Select All", "Invert Selection"]),
+  menu("View", ["Toolbars", "Status Bar", "-", "Large Icons", "Small Icons", "List", "Details", "-", "Refresh"]),
+  menu("Help", ["Help Topics", "-", "About Windows 98"]),
 ];
 
 const mailMenu: AppMenu[] = [
-  {
-    name: "File",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>New Message</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Save As...</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Exit</List.Item>
-      </List>
-    ),
-  },
-  {
-    name: "Edit",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Copy</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Select All</List.Item>
-      </List>
-    ),
-  },
-  {
-    name: "View",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Layout...</List.Item>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Refresh</List.Item>
-      </List>
-    ),
-  },
-  {
-    name: "Help",
-    list: (
-      <List>
-        <List.Item style={{ color: "#808080", cursor: "default" }}>Help Topics</List.Item>
-        <List.Divider />
-        <List.Item style={{ color: "#808080", cursor: "default" }}>About Outlook Express</List.Item>
-      </List>
-    ),
-  },
+  menu("File", ["New Message", "Save As...", "-", "Exit"]),
+  menu("Edit", ["Copy", "Select All"]),
+  menu("View", ["Layout...", "Refresh"]),
+  menu("Help", ["Help Topics", "-", "About Outlook Express"]),
 ];
 
 export const appRegistry: Record<AppId, AppDefinition> = {
@@ -202,47 +98,79 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     id: "my-computer",
     defaultTitle: "My Computer",
     defaultIcon: "/icons/Computer3_32x32_4.png",
-    defaultSize: { width: 580, height: 440 },
+    defaultSize: { width: 600, height: 440 },
     render: () => <MyComputer />,
     menu: explorerMenu,
+    adaptive: true,
   },
   projects: {
     id: "projects",
-    defaultTitle: "Portfolio",
+    defaultTitle: "Research Projects",
     defaultIcon: "/icons/Folder_32x32_4.png",
-    defaultSize: { width: 560, height: 400 },
+    defaultSize: { width: 640, height: 440 },
     render: (w) => (
       <ProjectsExplorer
-        categoryId={w.payload?.categoryId as string | undefined}
+        groupId="research"
+        lineId={w.payload?.lineId as string | undefined}
       />
     ),
     menu: explorerMenu,
+    adaptive: true,
+  },
+  exhibitions: {
+    id: "exhibitions",
+    defaultTitle: "Exhibitions",
+    defaultIcon: "/icons/Folder_32x32_4.png",
+    defaultSize: { width: 640, height: 440 },
+    render: () => <ProjectsExplorer groupId="exhibitions" />,
+    menu: explorerMenu,
+    adaptive: true,
+  },
+  design: {
+    id: "design",
+    defaultTitle: "Design Stuff",
+    defaultIcon: "/icons/Folder_32x32_4.png",
+    defaultSize: { width: 640, height: 440 },
+    render: (w) => (
+      <ProjectsExplorer
+        groupId="design"
+        lineId={w.payload?.lineId as string | undefined}
+      />
+    ),
+    menu: explorerMenu,
+    adaptive: true,
   },
   "project-doc": {
     id: "project-doc",
     defaultTitle: "Document",
     defaultIcon: "/icons/FolderFile_32x32_4.png",
-    defaultSize: { width: 520, height: 420 },
+    defaultSize: { width: 560, height: 460 },
     render: (w) => (
       <ProjectDocument projectId={w.payload?.projectId as string | undefined} />
     ),
     menu: notepadMenu,
+    contentRole: "document",
+    adaptive: true,
   },
   about: {
     id: "about",
-    defaultTitle: "About - Notepad",
+    defaultTitle: "Bio - Notepad",
     defaultIcon: "/icons/Winhlp324001_32x32_4.png",
-    defaultSize: { width: 480, height: 420 },
+    defaultSize: { width: 540, height: 470 },
     render: () => <About />,
     menu: notepadMenu,
+    contentRole: "document",
+    adaptive: true,
   },
   contact: {
     id: "contact",
     defaultTitle: "Contacts",
     defaultIcon: "/icons/Mailnews2_32x32_4.png",
-    defaultSize: { width: 440, height: 320 },
+    defaultSize: { width: 460, height: 380 },
     render: () => <Contact />,
     menu: mailMenu,
+    contentRole: "document",
+    adaptive: true,
   },
   "recycle-bin": {
     id: "recycle-bin",
@@ -251,13 +179,17 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     defaultSize: { width: 500, height: 360 },
     render: () => <RecycleBin />,
     menu: explorerMenu,
+    contentRole: "document",
+    adaptive: true,
   },
   "internet-explorer": {
     id: "internet-explorer",
     defaultTitle: "Internet Explorer",
     defaultIcon: "/icons/Inetcpl1313_32x32_4.png",
-    defaultSize: { width: 520, height: 380 },
+    defaultSize: { width: 540, height: 400 },
     render: () => <InternetExplorer />,
+    contentRole: "document",
+    adaptive: true,
   },
   minesweeper: {
     id: "minesweeper",
@@ -266,48 +198,8 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     defaultSize: { width: 220, height: 290 },
     render: () => <Minesweeper />,
     menu: [
-      {
-        name: "Game",
-        list: (
-          <List>
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              New
-            </List.Item>
-            <List.Divider />
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              Beginner
-            </List.Item>
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              Intermediate
-            </List.Item>
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              Expert
-            </List.Item>
-            <List.Divider />
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              Best Times...
-            </List.Item>
-            <List.Divider />
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              Exit
-            </List.Item>
-          </List>
-        ),
-      },
-      {
-        name: "Help",
-        list: (
-          <List>
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              Help Topics
-            </List.Item>
-            <List.Divider />
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              About Minesweeper
-            </List.Item>
-          </List>
-        ),
-      },
+      menu("Game", ["New", "-", "Beginner", "Intermediate", "Expert", "-", "Best Times...", "-", "Exit"]),
+      menu("Help", ["Help Topics", "-", "About Minesweeper"]),
     ],
   },
   solitaire: {
@@ -317,50 +209,28 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     defaultSize: { width: 460, height: 480 },
     render: () => <Solitaire />,
     menu: [
-      {
-        name: "Game",
-        list: (
-          <List>
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              Deal
-            </List.Item>
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              Undo
-            </List.Item>
-            <List.Divider />
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              Options...
-            </List.Item>
-            <List.Divider />
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              Exit
-            </List.Item>
-          </List>
-        ),
-      },
-      {
-        name: "Help",
-        list: (
-          <List>
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              Help Topics
-            </List.Item>
-            <List.Divider />
-            <List.Item style={{ color: "#808080", cursor: "default" }}>
-              About Solitaire
-            </List.Item>
-          </List>
-        ),
-      },
+      menu("Game", ["Deal", "Undo", "-", "Options...", "-", "Exit"]),
+      menu("Help", ["Help Topics", "-", "About Solitaire"]),
     ],
   },
   publications: {
     id: "publications",
     defaultTitle: "Publications.txt - Notepad",
     defaultIcon: "/icons/Notepad1_32x32_4.png",
-    defaultSize: { width: 460, height: 380 },
+    defaultSize: { width: 580, height: 480 },
     render: () => <Publications />,
     menu: notepadMenu,
+    contentRole: "document",
+    adaptive: true,
+  },
+  accessibility: {
+    id: "accessibility",
+    defaultTitle: "Accessibility Options",
+    defaultIcon: "/icons/Access110_32x32_4.png",
+    defaultSize: { width: 480, height: 440 },
+    render: (w) => <AccessibilityOptions windowId={w.id} />,
+    contentRole: "document",
+    adaptive: true,
   },
   calculator: {
     id: "calculator",
@@ -375,6 +245,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     defaultIcon: "/icons/MsDos_32x32_32.png",
     defaultSize: { width: 520, height: 340 },
     render: () => <MsDosPrompt />,
+    closeOnEscape: false,
   },
   "bouncing-dvd": {
     id: "bouncing-dvd",
@@ -404,13 +275,6 @@ export const appRegistry: Record<AppId, AppDefinition> = {
     defaultSize: { width: 380, height: 180 },
     render: (w) => <RunDialog windowId={w.id} />,
   },
-  cv: {
-    id: "cv",
-    defaultTitle: "CV",
-    defaultIcon: "/icons/Awschd32400_32x32_4.png",
-    defaultSize: { width: 380, height: 180 },
-    render: () => <CV />,
-  },
   placeholder: {
     id: "placeholder",
     defaultTitle: "Item",
@@ -422,5 +286,7 @@ export const appRegistry: Record<AppId, AppDefinition> = {
         name={(w.payload?.name as string | undefined) ?? "Item"}
       />
     ),
+    contentRole: "document",
+    adaptive: true,
   },
 };

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useAccessibilitySettings } from "../store/accessibilitySettings";
 
 const OPTIONS = [
   { label: "Boot diegomorra.exe", hc: false },
@@ -8,12 +9,10 @@ const OPTIONS = [
 export function ShutdownScreen() {
   const [selected, setSelected] = useState(0);
 
+  // Same setting as "Use High Contrast" in Accessibility Options (saved in
+  // this browser, so it survives the reload).
   const reboot = (hc: boolean) => {
-    if (hc) {
-      sessionStorage.setItem("phd-hc-mode", "1");
-    } else {
-      sessionStorage.removeItem("phd-hc-mode");
-    }
+    useAccessibilitySettings.getState().update({ highContrast: hc });
     window.location.reload();
   };
 

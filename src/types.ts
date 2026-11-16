@@ -1,6 +1,8 @@
 export type AppId =
   | "my-computer"
   | "projects"
+  | "design"
+  | "exhibitions"
   | "project-doc"
   | "about"
   | "contact"
@@ -15,7 +17,7 @@ export type AppId =
   | "bouncing-dvd"
   | "run"
   | "publications"
-  | "cv"
+  | "accessibility"
   | "placeholder";
 
 export interface WindowState {
@@ -36,4 +38,6 @@ export interface OpenWindowOptions {
   payload?: Record<string, unknown>;
   initialPosition?: { x: number; y: number };
   initialSize?: { width: number; height: number };
+  /** Move keyboard focus into the window (default true). */
+  focus?: boolean;
 }

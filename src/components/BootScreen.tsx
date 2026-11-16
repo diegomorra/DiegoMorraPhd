@@ -17,7 +17,7 @@ export function BootScreen() {
   }, []);
 
   return (
-    <div className="boot-screen">
+    <div className="boot-screen" aria-hidden="true">
       <div className="boot-dialog">
         <div className="boot-dialog-titlebar">
           <span>diegomorra.exe starting</span>
